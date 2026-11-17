@@ -57,8 +57,8 @@ const Accent = {
 };
 
 const COURSE_COLORS = {
-  enquiry:    "#3B82F6",
-  demo:       "#8B5CF6",
+  enquiry: "#3B82F6",
+  demo: "#8B5CF6",
   enrollment: "#10B981",
   counsellor: "#F59E0B",
 };
@@ -226,76 +226,76 @@ const Reports = () => {
     return () => observer.disconnect();
   }, []);
 
-//   const handleShare = async () => {
-//     if (!csvData.length) {
-//       alert("No data available to share!");
-//       return;
-//     }
-//     try {
-//       const { data } = await axios.get(`${ADMIN_STAT_API_END_POINT}/export-corporate-csv`, {
-//         params: { year: selectedYear, range: selectedRange },
-//         withCredentials: true,
-//       });
-//       if (!data?.success) throw new Error("CSV export failed");
-//       const csvUrl = data.url;
-//       const reportTitle = "📊 Corporate Analytics Performance Report";
-//       const message = `
-// ${reportTitle}
+  //   const handleShare = async () => {
+  //     if (!csvData.length) {
+  //       alert("No data available to share!");
+  //       return;
+  //     }
+  //     try {
+  //       const { data } = await axios.get(`${ADMIN_STAT_API_END_POINT}/export-corporate-csv`, {
+  //         params: { year: selectedYear, range: selectedRange },
+  //         withCredentials: true,
+  //       });
+  //       if (!data?.success) throw new Error("CSV export failed");
+  //       const csvUrl = data.url;
+  //       const reportTitle = "📊 Corporate Analytics Performance Report";
+  //       const message = `
+  // ${reportTitle}
 
-// Here's the latest performance insight from our analytics dashboard:
+  // Here's the latest performance insight from our analytics dashboard:
 
-// 📈 Revenue Growth: ${statsData?.totalRevenue || "N/A"}
-// 👥 New Users: ${statsData?.newUsers || 0}
-// 🗂️ Total Applications: ${statsData?.totalApplications || 0}
-// 🏆 Success Rate: ${applicationSuccessRate}%
-// 💼 Active Jobs: ${statsData?.totalJobs || 0}
+  // 📈 Revenue Growth: ${statsData?.totalRevenue || "N/A"}
+  // 👥 New Users: ${statsData?.newUsers || 0}
+  // 🗂️ Total Applications: ${statsData?.totalApplications || 0}
+  // 🏆 Success Rate: ${applicationSuccessRate}%
+  // 💼 Active Jobs: ${statsData?.totalJobs || 0}
 
-// 🔗 Download full report (CSV):
-// ${csvUrl}
+  // 🔗 Download full report (CSV):
+  // ${csvUrl}
 
-// © ${new Date().getFullYear()} Corporate Insights Team
-//       `.trim();
-//       const whatsappURL = `https://wa.me/?text=${encodeURIComponent(message)}`;
-//       const subject = "Corporate Analytics Report";
-//       const body = encodeURIComponent(message);
-//       const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
-//       const choice = window.confirm("Click OK to share via WhatsApp, or Cancel to share via Email.");
-//       window.open(choice ? whatsappURL : mailtoLink, "_blank");
-//     } catch (error) {
-//       console.error("Error sharing corporate CSV:", error);
-//       alert("Could not share report. Please try again later.");
-//     }
-//   };
+  // © ${new Date().getFullYear()} Corporate Insights Team
+  //       `.trim();
+  //       const whatsappURL = `https://wa.me/?text=${encodeURIComponent(message)}`;
+  //       const subject = "Corporate Analytics Report";
+  //       const body = encodeURIComponent(message);
+  //       const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
+  //       const choice = window.confirm("Click OK to share via WhatsApp, or Cancel to share via Email.");
+  //       window.open(choice ? whatsappURL : mailtoLink, "_blank");
+  //     } catch (error) {
+  //       console.error("Error sharing corporate CSV:", error);
+  //       alert("Could not share report. Please try again later.");
+  //     }
+  //   };
 
   const { user } = useSelector((state) => state.auth);
   const currentYear = new Date().getFullYear();
   //const availableYears = Array.from({ length: 5 }, (_, i) => currentYear - i);
 
-  const [selectedYear, setSelectedYear]       = useState(currentYear);
-  const [selectedRange, setSelectedRange]     = useState(7);
-  const [loading, setLoading]                 = useState(false);
-  const [statsData, setStatsData]             = useState(null);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [selectedRange, setSelectedRange] = useState(7);
+  const [loading, setLoading] = useState(false);
+  const [statsData, setStatsData] = useState(null);
   const [recentPurchases, setRecentPurchases] = useState([]);
-  const [, setPurchasePage]       = useState(1);
+  const [, setPurchasePage] = useState(1);
   const [showAllPurchases, setShowAllPurchases] = useState(false);
-  const [searchQuery, setSearchQuery]         = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [courseEnquiries, setCourseEnquiries] = useState([]);
-  const [courseSearch, setCourseSearch]       = useState("");
-  const [showAllCourses, setShowAllCourses]   = useState(false);
+  const [courseSearch, setCourseSearch] = useState("");
+  const [showAllCourses, setShowAllCourses] = useState(false);
   const [courseTypeFilter, setCourseTypeFilter] = useState("");
-  const [courseLoading, setCourseLoading]     = useState(false);
+  const [courseLoading, setCourseLoading] = useState(false);
   //const PURCHASES_PER_PAGE = 20;
 
   const csvData = statsData
     ? [{
-        totalRevenue: Number(String(statsData.totalRevenue ?? 0).replace(/[₹,\s]/g, "")) || 0,
-        newUsers: statsData.newUsers,
-        totalApplications: statsData.totalApplications,
-        shortlisted: statsData.shortlistedApplications,
-        rejected: statsData.rejectedApplications,
-        pending: statsData.pendingApplications,
-        totalJobs: statsData.totalJobs,
-      }]
+      totalRevenue: Number(String(statsData.totalRevenue ?? 0).replace(/[₹,\s]/g, "")) || 0,
+      newUsers: statsData.newUsers,
+      totalApplications: statsData.totalApplications,
+      shortlisted: statsData.shortlistedApplications,
+      rejected: statsData.rejectedApplications,
+      pending: statsData.pendingApplications,
+      totalJobs: statsData.totalJobs,
+    }]
     : [];
 
   const applicationSuccessRate = useMemo(() => {
@@ -321,8 +321,8 @@ const Reports = () => {
 
   const applicationStats = useMemo(() => [
     { name: "Shortlisted", value: statsData?.shortlistedApplications || 0, color: "#00b894" },
-    { name: "Pending",     value: statsData?.pendingApplications     || 0, color: "#fdcb6e" },
-    { name: "Rejected",    value: statsData?.rejectedApplications    || 0, color: "#d63031" },
+    { name: "Pending", value: statsData?.pendingApplications || 0, color: "#fdcb6e" },
+    { name: "Rejected", value: statsData?.rejectedApplications || 0, color: "#d63031" },
   ], [statsData]);
 
   // ✅ Derived course summary counts for charts
@@ -332,10 +332,10 @@ const Reports = () => {
       { enquiry: 0, demo: 0, enrollment: 0, counsellor: 0 }
     );
     return [
-      { name: "Enquiries",   value: counts.enquiry,    type: "enquiry",    color: COURSE_COLORS.enquiry },
-      { name: "Demo",        value: counts.demo,        type: "demo",       color: COURSE_COLORS.demo },
-      { name: "Enrollments", value: counts.enrollment,  type: "enrollment", color: COURSE_COLORS.enrollment },
-      { name: "Counsellor",  value: counts.counsellor,  type: "counsellor", color: COURSE_COLORS.counsellor },
+      { name: "Enquiries", value: counts.enquiry, type: "enquiry", color: COURSE_COLORS.enquiry },
+      { name: "Demo", value: counts.demo, type: "demo", color: COURSE_COLORS.demo },
+      { name: "Enrollments", value: counts.enrollment, type: "enrollment", color: COURSE_COLORS.enrollment },
+      { name: "Counsellor", value: counts.counsellor, type: "counsellor", color: COURSE_COLORS.counsellor },
     ];
   }, [courseEnquiries]);
 
@@ -411,12 +411,12 @@ const Reports = () => {
       fetchRecentPurchases();
       fetchCourseEnquiries();
     }
-     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const deltas = useMemo(() => ({
     revenue: statsData ? Math.round((Math.random() * 8 - 4) * 10) / 10 : null,
-    users:   statsData ? Math.round((Math.random() * 12 - 6) * 10) / 10 : null,
+    users: statsData ? Math.round((Math.random() * 12 - 6) * 10) / 10 : null,
     success: statsData ? Math.round((Math.random() * 6 - 3) * 10) / 10 : null,
   }), [statsData]);
 
@@ -425,7 +425,7 @@ const Reports = () => {
       <Navbar linkName="Reports" />
 
       <main className="px-4 sm:px-6 lg:px-8 pt-6 pb-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors overflow-x-hidden w-full">
-  <div className="max-w-[1400px] mx-auto w-full">
+        <div className="max-w-[1400px] mx-auto w-full">
 
           {/* Header */}
           <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
@@ -471,10 +471,10 @@ const Reports = () => {
               ))
             ) : (
               [
-                { label: "Total Revenue", value: statsData?.totalRevenue || "₹0",        icon: <DollarSign size={28} className="text-[#2563EB] dark:text-blue-400" />,   delta: deltas.revenue },
-                { label: "New Users",     value: statsData?.newUsers || 0,               icon: <Users      size={28} className="text-[#16A34A] dark:text-green-400" />,  delta: deltas.users },
-                { label: "Success Rate",  value: `${applicationSuccessRate}%`,           icon: <CheckCircle size={28} className="text-[#7C3AED] dark:text-purple-400" />, delta: deltas.success },
-                { label: "Posted Jobs",   value: statsData?.totalJobs || 0,              icon: <Briefcase  size={28} className="text-[#F59E0B] dark:text-amber-400" />,  delta: null },
+                { label: "Total Revenue", value: statsData?.totalRevenue || "₹0", icon: <DollarSign size={28} className="text-[#2563EB] dark:text-blue-400" />, delta: deltas.revenue },
+                { label: "New Users", value: statsData?.newUsers || 0, icon: <Users size={28} className="text-[#16A34A] dark:text-green-400" />, delta: deltas.users },
+                { label: "Success Rate", value: `${applicationSuccessRate}%`, icon: <CheckCircle size={28} className="text-[#7C3AED] dark:text-purple-400" />, delta: deltas.success },
+                { label: "Posted Jobs", value: statsData?.totalJobs || 0, icon: <Briefcase size={28} className="text-[#F59E0B] dark:text-amber-400" />, delta: null },
               ].map((kpi, idx) => (
                 <KPI key={idx} label={kpi.label} value={kpi.value} icon={kpi.icon} delta={kpi.delta} />
               ))
@@ -489,7 +489,7 @@ const Reports = () => {
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Revenue Trend</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Revenue over selected range</p>
               </div>
-             <div className="mt-4 h-[260px] sm:h-[280px] w-full min-w-0">
+              <div className="mt-4 h-[260px] sm:h-[280px] w-full min-w-0">
                 {loading ? <Skeleton className="h-full" /> : statsData?.revenueTrend?.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={statsData.revenueTrend} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
@@ -540,7 +540,7 @@ const Reports = () => {
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Shortlisted vs Pending vs Rejected</p>
               </div>
               <div className="flex flex-col lg:flex-row items-center gap-6">
-               <div className="w-full lg:w-1/2 h-64 min-w-0">
+                <div className="w-full lg:w-1/2 h-64 min-w-0">
                   {loading ? <Skeleton className="h-full" /> : (
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
@@ -657,7 +657,7 @@ const Reports = () => {
                       <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
                         Status Breakdown
                       </p>
-                     <div className="h-64 w-full min-w-0">
+                      <div className="h-64 w-full min-w-0">
                         <ResponsiveContainer width="100%" height="100%">
                           <PieChart>
                             <Pie
@@ -824,8 +824,8 @@ const Reports = () => {
                 return (
                   <div className="flex flex-wrap gap-2 mb-4">
                     {[
-                      { label: "Enquiry",    key: "enquiry",    color: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300" },
-                      { label: "Demo",       key: "demo",       color: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300" },
+                      { label: "Enquiry", key: "enquiry", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300" },
+                      { label: "Demo", key: "demo", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300" },
                       { label: "Enrollment", key: "enrollment", color: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" },
                       { label: "Counsellor", key: "counsellor", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300" },
                     ].map(b => (
@@ -872,37 +872,51 @@ const Reports = () => {
                             <tr key={e._id} className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                               <td className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400">{idx + 1}</td>
                               <td className="py-3 px-4 text-sm text-gray-900 dark:text-gray-100 font-medium">{e.name}</td>
-                              <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{e.email}</td>
-                              <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{e.phone}</td>
+                              <td className="py-3 px-2 text-sm text-gray-600 dark:text-gray-400">{e.email}</td>
+                              <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                                {(() => {
+                                  if (!e.phone) return <span className="text-gray-400">N/A</span>;
+
+                                  const digits = String(e.phone).replace(/\D/g, "");
+
+                                  if (/^[6-9]\d{9}$/.test(digits)) {
+                                    // Show it cleanly in one line with a non-breaking space
+                                    return <span>+91&nbsp;{digits.slice(0, 5)}&nbsp;{digits.slice(5)}</span>;
+                                  }
+
+                                  return <span className="text-red-800 bg-red-100 rounded-sm p-1 text-[12px]">N/A</span>;
+                                })()}
+                              </td>
                               <td className="py-3 px-4 text-sm text-gray-900 dark:text-gray-100">{e.courseName}</td>
                               <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{e.fee || "—"}</td>
                               <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{e.mode}</td>
                               <td className="py-3 px-4 text-sm text-gray-600 dark:text-gray-400">{e.batch || "—"}</td>
                               <td className="py-3 px-4">
-                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                                  e.type === "enrollment" ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" :
-                                  e.type === "demo"       ? "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300" :
-                                  e.type === "counsellor" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300" :
-                                  "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
-                                }`}>{e.type}</span>
+                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${e.type === "enrollment" ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" :
+                                  e.type === "demo" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300" :
+                                    e.type === "counsellor" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300" :
+                                      "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
+                                  }`}>{e.type}</span>
                               </td>
                               <td className="py-3 px-4">
-                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                                  e.status === "enrolled"  ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" :
+                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${e.status === "enrolled" ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" :
                                   e.status === "contacted" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300" :
-                                  e.status === "closed"    ? "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400" :
-                                  "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300"
-                                }`}>{e.status}</span>
+                                    e.status === "closed" ? "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400" :
+                                      "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300"
+                                  }`}>{e.status}</span>
                               </td>
                               <td className="py-3 px-4">
-                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                                  e.paymentStatus === "paid"   ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" :
+                                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${e.paymentStatus === "paid" ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300" :
                                   e.paymentStatus === "failed" ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300" :
-                                  "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"
-                                }`}>{e.paymentStatus}</span>
+                                    "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"
+                                  }`}>{e.paymentStatus}</span>
                               </td>
-                              <td className="py-3 px-4 text-sm text-right text-gray-500 dark:text-gray-400">
-                                {new Date(e.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                              <td className="py-3 px-4 text-sm text-right text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                                {new Date(e.createdAt).toLocaleDateString("en-IN", {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric"
+                                })}
                               </td>
                             </tr>
                           )) : (

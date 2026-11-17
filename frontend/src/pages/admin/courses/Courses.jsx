@@ -15,17 +15,17 @@ import { COURSE_API_END_POINT } from "@/utils/ApiEndPoint";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 
 const TABS = [
-  { key: "enquiry",    label: "Enquiries",          Icon: MessageSquare },
-  { key: "demo",       label: "Demo Sessions",      Icon: Monitor },
-  { key: "enrollment", label: "Enrollments",        Icon: GraduationCap },
+  { key: "enquiry", label: "Enquiries", Icon: MessageSquare },
+  { key: "demo", label: "Demo Sessions", Icon: Monitor },
+  { key: "enrollment", label: "Enrollments", Icon: GraduationCap },
   { key: "counsellor", label: "Talk to Counsellor", Icon: PhoneCall },
 ];
 
 const STATUS_COLORS = {
-  new:       "bg-blue-100 text-blue-700",
+  new: "bg-blue-100 text-blue-700",
   contacted: "bg-yellow-100 text-yellow-700",
-  enrolled:  "bg-green-100 text-green-700",
-  closed:    "bg-gray-100 text-gray-600",
+  enrolled: "bg-green-100 text-green-700",
+  closed: "bg-gray-100 text-gray-600",
 };
 
 
@@ -101,18 +101,18 @@ const SkeletonRow = ({ activeTab }) => (
 const ITEMS_PER_PAGE = 15;
 
 const Courses = () => {
-  const [activeTab, setActiveTab]         = useState("enquiry");
-  const [search, setSearch]               = useState("");
+  const [activeTab, setActiveTab] = useState("enquiry");
+  const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [page, setPage]                   = useState(1);
-  const [data, setData]                   = useState([]);
-  const [total, setTotal]                 = useState(0);
-  const [summary, setSummary]             = useState({ enquiry: 0, demo: 0, enrollment: 0, counsellor: 0 });
-  const [loading, setLoading]             = useState(false);
-  const [updatingId, setUpdatingId]       = useState(null);
-  const [deletingId, setDeletingId]       = useState(null);
+  const [page, setPage] = useState(1);
+  const [data, setData] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [summary, setSummary] = useState({ enquiry: 0, demo: 0, enrollment: 0, counsellor: 0 });
+  const [loading, setLoading] = useState(false);
+  const [updatingId, setUpdatingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedRecord, setSelectedRecord]  = useState(null);
+  const [selectedRecord, setSelectedRecord] = useState(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -190,10 +190,10 @@ const Courses = () => {
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
   const stats = [
-    { title: "Total Enquiries",    count: summary.enquiry,    Icon: MessageSquare, color: "text-blue-600",   bg: "bg-blue-100",   tab: "enquiry" },
-    { title: "Demo Sessions",      count: summary.demo,       Icon: Monitor,       color: "text-green-600",  bg: "bg-green-100",  tab: "demo" },
-    { title: "Enrollments",        count: summary.enrollment, Icon: GraduationCap, color: "text-purple-600", bg: "bg-purple-100", tab: "enrollment" },
-    { title: "Talk to Counsellor", count: summary.counsellor, Icon: PhoneCall,     color: "text-orange-600", bg: "bg-orange-100", tab: "counsellor" },
+    { title: "Total Enquiries", count: summary.enquiry, Icon: MessageSquare, color: "text-blue-600", bg: "bg-blue-100", tab: "enquiry" },
+    { title: "Demo Sessions", count: summary.demo, Icon: Monitor, color: "text-green-600", bg: "bg-green-100", tab: "demo" },
+    { title: "Enrollments", count: summary.enrollment, Icon: GraduationCap, color: "text-purple-600", bg: "bg-purple-100", tab: "enrollment" },
+    { title: "Talk to Counsellor", count: summary.counsellor, Icon: PhoneCall, color: "text-orange-600", bg: "bg-orange-100", tab: "counsellor" },
   ];
 
   return (
@@ -208,11 +208,10 @@ const Courses = () => {
             <Card
               key={i}
               onClick={() => handleTabChange(s.tab)}
-              className={`flex items-center justify-between p-6 bg-white dark:bg-gray-800 shadow-sm rounded-2xl cursor-pointer transition-all border-2 ${
-                activeTab === s.tab
-                  ? "border-blue-500 ring-2 ring-blue-100 dark:ring-blue-900"
-                  : "border-gray-100 dark:border-gray-700 hover:border-blue-300"
-              }`}
+              className={`flex items-center justify-between p-6 bg-white dark:bg-gray-800 shadow-sm rounded-2xl cursor-pointer transition-all border-2 ${activeTab === s.tab
+                ? "border-blue-500 ring-2 ring-blue-100 dark:ring-blue-900"
+                : "border-gray-100 dark:border-gray-700 hover:border-blue-300"
+                }`}
             >
               <div>
                 <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">{s.title}</p>
@@ -234,11 +233,10 @@ const Courses = () => {
                   <button
                     key={key}
                     onClick={() => handleTabChange(key)}
-                    className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors ${
-                      activeTab === key
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-blue-400"
-                    }`}
+                    className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold border transition-colors ${activeTab === key
+                      ? "bg-blue-600 text-white border-blue-600"
+                      : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600 hover:border-blue-400"
+                      }`}
                   >
                     <Icon size={16} /> {label}
                   </button>
@@ -356,7 +354,7 @@ const Courses = () => {
                         </TableCell>
 
                         {/* ✅ Delete icon cell */}
-                        {/* <TableCell className="text-center">
+                {/* <TableCell className="text-center">
                           {deletingId === row._id ? (
                             <span className="text-gray-400 dark:text-gray-500 text-sm">...</span>
                           ) : (
@@ -379,122 +377,144 @@ const Courses = () => {
                       </TableCell>
                     </TableRow>
                   )}
-                </TableBody> */} 
+                </TableBody> */}
 
-                
-<TableBody>
-  {loading ? (
-    Array.from({ length: 8 }).map((_, index) => (
-      <SkeletonRow key={index} activeTab={activeTab} />
-    ))
-  ) : filtered.length > 0 ? (
-    filtered.map((row, idx) => (
-      <TableRow
-        key={row._id}
-        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700"
-      >
-        <TableCell className="text-gray-500 text-sm">
-          {(page - 1) * ITEMS_PER_PAGE + idx + 1}
-        </TableCell>
 
-        <TableCell className="font-semibold text-gray-800 dark:text-gray-200">
-          {row.name}
-        </TableCell>
+                <TableBody>
+                  {loading ? (
+                    Array.from({ length: 8 }).map((_, index) => (
+                      <SkeletonRow key={index} activeTab={activeTab} />
+                    ))
+                  ) : filtered.length > 0 ? (
+                    filtered.map((row, idx) => (
+                      <TableRow
+                        key={row._id}
+                        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 border-b border-gray-200 dark:border-gray-700"
+                      >
+                        <TableCell className="text-gray-500 text-sm">
+                          {(page - 1) * ITEMS_PER_PAGE + idx + 1}
+                        </TableCell>
 
-        <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
-          {row.email}
-        </TableCell>
+                        <TableCell className="font-semibold text-gray-800 dark:text-gray-200">
+                          {row.name}
+                        </TableCell>
 
-        <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
-          {row.phone}
-        </TableCell>
+                        <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
+                          {row.email}
+                        </TableCell>
 
-        <TableCell>
-          <span className="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs rounded-full font-medium">
-            {row.courseName}
-          </span>
-        </TableCell>
+                        {/* ✅ PHONE CELL WITH RED N/A BADGE */}
+                        <TableCell className="text-center text-sm whitespace-nowrap">
+                          {(() => {
+                            if (!row.phone) {
+                              return (
+                                <span className="inline-block px-2 py-1 text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-full">
+                                  N/A
+                                </span>
+                              );
+                            }
+                            const digits = String(row.phone).replace(/\D/g, "");
+                            if (/^[6-9]\d{9}$/.test(digits)) {
+                              return (
+                                <span className="text-gray-700 dark:text-gray-300">
+                                  +91&nbsp;{digits.slice(0, 5)}&nbsp;{digits.slice(5)}
+                                </span>
+                              );
+                            }
+                            return (
+                              <span className="inline-block px-2 py-1 text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-full" title={`Invalid input: ${row.phone}`}>
+                                N/A
+                              </span>
+                            );
+                          })()}
+                        </TableCell>
 
-        <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
-          {row.mode}
-        </TableCell>
+                        <TableCell>
+                          <span className="px-2.5 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs rounded-full font-medium">
+                            {row.courseName}
+                          </span>
+                        </TableCell>
 
-        {activeTab === "demo" && (
-          <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
-            {row.batch || "—"}
-          </TableCell>
-        )}
+                        <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
+                          {row.mode}
+                        </TableCell>
 
-        {activeTab === "enrollment" && (
-          <>
-            <TableCell className="text-gray-600 dark:text-gray-400 text-sm font-semibold text-green-600">
-              {row.fee || "—"}
-            </TableCell>
-            <TableCell className="text-gray-500 text-xs font-mono">
-              {row.paymentId ? (
-                <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
-                  {row.paymentId}
-                </span>
-              ) : (
-                <span className="bg-yellow-50 text-yellow-600 px-2 py-0.5 rounded-full">
-                  Pending
-                </span>
-              )}
-            </TableCell>
-          </>
-        )}
+                        {activeTab === "demo" && (
+                          <TableCell className="text-gray-600 dark:text-gray-400 text-sm">
+                            {row.batch || "—"}
+                          </TableCell>
+                        )}
 
-        <TableCell className="text-gray-500 text-xs whitespace-nowrap">
-          {new Date(row.createdAt).toLocaleDateString("en-IN", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-          })}
-        </TableCell>
+                        {activeTab === "enrollment" && (
+                          <>
+                            <TableCell className="text-gray-600 dark:text-gray-400 text-sm font-semibold text-green-600">
+                              {row.fee || "—"}
+                            </TableCell>
+                            <TableCell className="text-gray-500 text-xs font-mono">
+                              {row.paymentId ? (
+                                <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
+                                  {row.paymentId}
+                                </span>
+                              ) : (
+                                <span className="bg-yellow-50 text-yellow-600 px-2 py-0.5 rounded-full">
+                                  Pending
+                                </span>
+                              )}
+                            </TableCell>
+                          </>
+                        )}
 
-        <TableCell>
-          <select
-            value={row.status}
-            disabled={updatingId === row._id}
-            onChange={(e) => handleStatusChange(row._id, e.target.value)}
-            className={`text-xs font-semibold px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none ${STATUS_COLORS[row.status]}`}
-          >
-            <option value="new">New</option>
-            <option value="contacted">Contacted</option>
-            <option value="enrolled">Enrolled</option>
-            <option value="closed">Closed</option>
-          </select>
-        </TableCell>
+                        <TableCell className="text-gray-500 text-xs whitespace-nowrap">
+                          {new Date(row.createdAt).toLocaleDateString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </TableCell>
 
-        <TableCell className="text-center">
-          {deletingId === row._id ? (
-            <span className="text-gray-400 dark:text-gray-500 text-sm">
-              ...
-            </span>
-          ) : (
-            <Trash2
-              size={18}
-              className="text-red-500 dark:text-red-400 cursor-pointer hover:scale-110 transition mx-auto"
-              onClick={() => {
-                setSelectedRecord(row);
-                setShowDeleteModal(true);
-              }}
-            />
-          )}
-        </TableCell>
-      </TableRow>
-    ))
-  ) : (
-    <TableRow>
-      <TableCell
-        colSpan={activeTab === "enrollment" ? 11 : activeTab === "demo" ? 9 : 8}
-        className="text-center py-10 text-gray-500 dark:text-gray-400"
-      >
-        No {TABS.find((t) => t.key === activeTab)?.label.toLowerCase()} found
-      </TableCell>
-    </TableRow>
-  )}
-</TableBody>
+                        <TableCell>
+                          <select
+                            value={row.status}
+                            disabled={updatingId === row._id}
+                            onChange={(e) => handleStatusChange(row._id, e.target.value)}
+                            className={`text-xs font-semibold px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none ${STATUS_COLORS[row.status]}`}
+                          >
+                            <option value="new">New</option>
+                            <option value="contacted">Contacted</option>
+                            <option value="enrolled">Enrolled</option>
+                            <option value="closed">Closed</option>
+                          </select>
+                        </TableCell>
+
+                        <TableCell className="text-center">
+                          {deletingId === row._id ? (
+                            <span className="text-gray-400 dark:text-gray-500 text-sm">
+                              ...
+                            </span>
+                          ) : (
+                            <Trash2
+                              size={18}
+                              className="text-red-500 dark:text-red-400 cursor-pointer hover:scale-110 transition mx-auto"
+                              onClick={() => {
+                                setSelectedRecord(row);
+                                setShowDeleteModal(true);
+                              }}
+                            />
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={activeTab === "enrollment" ? 11 : activeTab === "demo" ? 9 : 8}
+                        className="text-center py-10 text-gray-500 dark:text-gray-400"
+                      >
+                        No {TABS.find((t) => t.key === activeTab)?.label.toLowerCase()} found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
 
               </Table>
             </div>
@@ -532,11 +552,10 @@ const Courses = () => {
                         key={p}
                         onClick={() => setPage(p)}
                         size="sm"
-                        className={`px-3 ${
-                          page === p
-                            ? "bg-blue-600 text-white hover:bg-blue-700"
-                            : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                        }`}
+                        className={`px-3 ${page === p
+                          ? "bg-blue-600 text-white hover:bg-blue-700"
+                          : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                          }`}
                       >
                         {p}
                       </Button>

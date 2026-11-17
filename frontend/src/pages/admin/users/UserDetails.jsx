@@ -1,4 +1,4 @@
-import   { useEffect, useState,useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import ApplicationList from "./ApplicationList";
 import Navbar from "@/components/admin/Navbar";
 import { Badge } from "../../../components/ui/badge";
@@ -9,82 +9,93 @@ import { IoIosArrowRoundBack } from "react-icons/io";
 
 const UserDetails = () => {
   const { userId } = useParams();
-
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [applications, setApplications] = useState([]);
   const navigate = useNavigate();
 
-  // Newest experience first (plural = what signup writes; singular = legacy docs)
+  const [user, setUser] = useState(null);
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Newest experience first
   const primaryExperience =
     user?.profile?.experiences?.[0] || user?.profile?.experience || null;
   const isFresher = user?.profile?.hasExperience === false && !primaryExperience;
 
-  const fetchUser = useCallback(async () => {
-  try {
-    setLoading(true);
-    const response = await axios.get(
-      `${ADMIN_USER_DATA_API_END_POINT}/getUser/${userId}`,
-      { withCredentials: true }
-    );
-    if (response.data.success) {
-      setUser(response.data.data);
+  const fetchAll = useCallback(async (signal) => {
+    if (!userId) {
+      setLoading(false);
+      return;
     }
-  } catch (err) {
-    console.log(`Error in fetching user data: ${err}`);
-  } finally {
-    setLoading(false);
-  }
-}, [userId]); // ← userId is used inside → must be in deps
 
-  const fetchApplications = useCallback(async () => {
-  try {
     setLoading(true);
-    const response = await axios.get(
-      `${ADMIN_USER_DATA_API_END_POINT}/user-all-application/${userId}`,
-      { withCredentials: true }
-    );
-    if (response.data.success) {
-      setApplications(response.data.data);
+    setError(null);
+
+    try {
+      const [userRes, appRes] = await Promise.all([
+        axios.get(`${ADMIN_USER_DATA_API_END_POINT}/getUser/${userId}`, {
+          withCredentials: true,
+          signal,
+        }),
+        axios.get(`${ADMIN_USER_DATA_API_END_POINT}/user-all-application/${userId}`, {
+          withCredentials: true,
+          signal,
+        }),
+      ]);
+
+      if (userRes.data.success) setUser(userRes.data.data);
+      if (appRes.data.success) setApplications(appRes.data.data || []);
+    } catch (err) {
+      // Ignore cancellation errors (user navigated away)
+      if (err.name === "CanceledError" || err.code === "ERR_CANCELED") return;
+      console.error("Error fetching user details:", err);
+      setError("Failed to load user details. Please try again.");
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.log(`Error in fetching user applications: ${err}`);
-  } finally {
-    setLoading(false);
-  }
-}, [userId]); // ← userId is used inside → must be in deps
+  }, [userId]);
 
- 
-
-// ✅ Now the effect can list both
-useEffect(() => {
-  fetchUser();
-  fetchApplications();
-}, [fetchUser, fetchApplications]);
-
-  
+  useEffect(() => {
+    const controller = new AbortController();
+    fetchAll(controller.signal);
+    return () => controller.abort();
+  }, [fetchAll]);
 
   return (
     <>
       <Navbar linkName="User Details" />
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-        <div className="ps-8 pt-2">
-          <IoIosArrowRoundBack
-            size={35}
-            className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-200 transition-colors cursor-pointer"
+        <div className="ps-8 pt-4">
+          <button
             onClick={() => navigate(-1)}
-          />
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-green-700 text-white text-md font-semibold shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
+          >
+            <IoIosArrowRoundBack size={25} />
+            Back
+          </button>
         </div>
         <div className="m-3 sm:m-4 p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 transition-colors">
-
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* LEFT : USER DETAILS */}
-            {loading ? (
-              <p className="text-xl text-blue-700 dark:text-blue-400">Loading...</p>
-            ) : (
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <div className="animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent" />
+              <p className="mt-4 text-gray-600 dark:text-gray-400">
+                Loading user details...
+              </p>
+            </div>
+          ) : error ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <p className="text-red-600 dark:text-red-400">{error}</p>
+              <button
+                onClick={() => fetchAll()}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Retry
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* LEFT : USER DETAILS */}
               <div className="lg:w-1/3 border-b lg:border-b-0 lg:border-r border-gray-300 dark:border-gray-700 lg:pr-6 pb-6 lg:pb-0">
-
                 <div className="flex flex-col items-center text-center">
                   <img
                     src={
@@ -96,7 +107,7 @@ useEffect(() => {
                     alt={user?.fullname || "Profile"}
                     className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-gray-200 dark:border-gray-600 shadow-lg bg-gray-100 dark:bg-gray-700"
                     onError={(e) => {
-                      e.currentTarget.onerror = null; // prevent infinite loop
+                      e.currentTarget.onerror = null;
                       e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
                         user?.fullname || "User"
                       )}&background=3b82f6&color=fff&size=200`;
@@ -121,8 +132,7 @@ useEffect(() => {
                   </p>
                   <p className="break-words text-gray-700 dark:text-gray-300">
                     <span className="font-medium text-gray-900 dark:text-white">Address:</span>{" "}
-                    {user?.address?.city}, {user?.address?.state},{" "}
-                    {user?.address?.country}
+                    {user?.address?.city}, {user?.address?.state}, {user?.address?.country}
                   </p>
                 </div>
 
@@ -186,8 +196,7 @@ useEffect(() => {
                       Skills
                     </h3>
                     <div className="mt-3 flex flex-wrap gap-2">
-                      {Array.isArray(user?.profile?.skills) &&
-                        user.profile.skills.length > 0 ? (
+                      {Array.isArray(user?.profile?.skills) && user.profile.skills.length > 0 ? (
                         user.profile.skills.map((skill, index) => (
                           <Badge
                             key={index}
@@ -197,9 +206,7 @@ useEffect(() => {
                           </Badge>
                         ))
                       ) : (
-                        <span className="text-gray-600 dark:text-gray-400">
-                          No skills listed
-                        </span>
+                        <span className="text-gray-600 dark:text-gray-400">No skills listed</span>
                       )}
                     </div>
                   </div>
@@ -220,17 +227,13 @@ useEffect(() => {
                   )}
                 </div>
               </div>
-            )}
 
-            {/* RIGHT : APPLICATION LIST */}
-            <div className="lg:w-2/3">
-              {loading ? (
-                <p className="text-xl text-blue-700 dark:text-blue-400">Loading...</p>
-              ) : (
+              {/* RIGHT : APPLICATION LIST */}
+              <div className="lg:w-2/3">
                 <ApplicationList applications={applications} />
-              )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

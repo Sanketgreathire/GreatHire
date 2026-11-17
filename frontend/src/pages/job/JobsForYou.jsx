@@ -267,15 +267,15 @@ const JobsForYou = ({ jobs = [] }) => {
     }
     const skillsArr =
       Array.isArray(userData?.profile?.skills) &&
-      userData.profile.skills.length > 0
+        userData.profile.skills.length > 0
         ? userData.profile.skills
         : typeof userData?.profile?.skills === "string" &&
           userData.profile.skills.trim().length > 0
-        ? userData.profile.skills
+          ? userData.profile.skills
             .split(",")
             .map((s) => s.trim())
             .filter(Boolean)
-        : [];
+          : [];
     if (!skillsArr || skillsArr.length === 0) {
       missing.push({ label: "Skills", icon: Briefcase });
     }
@@ -468,7 +468,7 @@ const JobsForYou = ({ jobs = [] }) => {
         console.error("Bulk apply error:", error);
         toast.error(
           error?.response?.data?.message ||
-            "Bulk apply failed. Try again."
+          "Bulk apply failed. Try again."
         );
       } finally {
         setIsBulkApplying(false);
@@ -548,17 +548,15 @@ const JobsForYou = ({ jobs = [] }) => {
         <div className="flex justify-center gap-4 dark:bg-gray-900 w-full">
           {/* LEFT: JOB CARDS */}
           <div
-            className={`relative m-2 md:m-0 flex flex-col ${
-              selectedJob
-                ? "w-full md:w-[45%] lg:w-2/5 flex-shrink-0"
-                : "w-full"
-            }`}
+            className={`relative m-2 md:m-0 flex flex-col ${selectedJob
+              ? "w-full md:w-[45%] lg:w-2/5 flex-shrink-0"
+              : "w-full"
+              }`}
           >
             {user && selectedJobs.size > 0 && (
               <div
-                className={`sticky z-20 mb-3 flex items-center justify-between bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-md border border-blue-400/30 ${
-                  selectedJob ? "top-0" : "top-[80px]"
-                }`}
+                className={`sticky z-20 mb-3 flex items-center justify-between bg-blue-600 text-white px-4 py-2.5 rounded-xl shadow-md border border-blue-400/30 ${selectedJob ? "top-0" : "top-[80px]"
+                  }`}
               >
                 <span className="text-sm font-medium tracking-wide">
                   {selectedJobs.size} job(s) selected
@@ -591,182 +589,181 @@ const JobsForYou = ({ jobs = [] }) => {
               }
             >
 
-            {currentJobs?.map((job) => {
-              const isSelected = selectedJobs.has(job._id);
-              const isActive = selectedJob?._id === job._id;
-              const salary = job?.jobDetails?.salary;
+              {currentJobs?.map((job) => {
+                const isSelected = selectedJobs.has(job._id);
+                const isActive = selectedJob?._id === job._id;
+                const salary = job?.jobDetails?.salary;
 
-              const activeDays = calculateActiveDays(job?.createdAt);
-              const postedDateStr = (() => {
-                if (activeDays === 0) return "Today";
-                if (activeDays === 1) return "Yesterday";
-                if (activeDays < 7) return `${activeDays}d ago`;
-                if (activeDays < 30) return `${Math.floor(activeDays / 7)}w ago`;
-                if (activeDays < 365) return `${Math.floor(activeDays / 30)}mo ago`;
-                return `${Math.floor(activeDays / 365)}y ago`;
-              })();
+                const activeDays = calculateActiveDays(job?.createdAt);
+                const postedDateStr = (() => {
+                  if (activeDays === 0) return "Today";
+                  if (activeDays === 1) return "Yesterday";
+                  if (activeDays < 7) return `${activeDays}d ago`;
+                  if (activeDays < 30) return `${Math.floor(activeDays / 7)}w ago`;
+                  if (activeDays < 365) return `${Math.floor(activeDays / 30)}mo ago`;
+                  return `${Math.floor(activeDays / 365)}y ago`;
+                })();
 
-              const formattedSalary = (() => {
-                if (typeof salary !== "string" || !salary.trim()) return null;
-                const parts = salary
-                  .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
-                  .split("-")
-                  .map((p) => p.trim())
-                  .filter(Boolean);
-                if (parts.length === 1) return `₹${parts[0]}`;
-                if (parts.length === 2) return `₹${parts[0]} – ₹${parts[1]}`;
-                return `₹${parts.join(" – ₹")}`;
-              })();
+                const formattedSalary = (() => {
+                  if (typeof salary !== "string" || !salary.trim()) return null;
+                  const parts = salary
+                    .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
+                    .split("-")
+                    .map((p) => p.trim())
+                    .filter(Boolean);
+                  if (parts.length === 1) return `₹${parts[0]}`;
+                  if (parts.length === 2) return `₹${parts[0]} – ₹${parts[1]}`;
+                  return `₹${parts.join(" – ₹")}`;
+                })();
 
-              return (
-                <div
-                  key={job._id}
-                  onClick={() => handleJobClick(job)}
-                  className={`group relative flex flex-col rounded-xl border cursor-pointer transition-all duration-200 text-left bg-white dark:bg-gray-800 ${
-                    isActive
+                return (
+                  <div
+                    key={job._id}
+                    onClick={() => handleJobClick(job)}
+                    className={`group relative flex flex-col rounded-xl border cursor-pointer transition-all duration-200 text-left bg-white dark:bg-gray-800 ${isActive
                       ? "border-sky-500 shadow-md ring-2 ring-sky-200 dark:border-sky-400 dark:ring-sky-900/50"
                       : "border-slate-200 hover:border-sky-300 hover:shadow-md dark:border-gray-700 dark:hover:border-sky-500 shadow-sm"
-                  }`}
-                >
-                  <div className="p-4 flex flex-col gap-2.5">
-                    {/* Row 1: Top badges row + bookmark/share */}
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        {user && !hasAppliedToJob(job._id) && (
-                          <div
-                            className="flex-shrink-0"
-                            onClick={(e) => toggleJobSelection(e, job._id)}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => {}}
-                              aria-label={`Select ${job?.jobDetails?.title || "job"}`}
-                              className="w-4 h-4 rounded accent-sky-600 cursor-pointer"
-                            />
-                          </div>
-                        )}
-                        {job?.jobDetails?.urgentHiring === "Yes" && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full whitespace-nowrap dark:text-sky-300 dark:bg-sky-950/40 dark:border-sky-700">
-                            ⚡ Urgent
-                          </span>
-                        )}
-                        {hasAppliedToJob(job._id) && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full whitespace-nowrap dark:text-emerald-300 dark:bg-emerald-950/40 dark:border-emerald-700">
-                            ✓ Applied
-                          </span>
-                        )}
-                        {!job?.jobDetails?.urgentHiring && !hasAppliedToJob(job._id) && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full whitespace-nowrap dark:text-blue-300 dark:bg-blue-950/40 dark:border-blue-700">
-                            Easily apply
-                          </span>
-                        )}
-                      </div>
+                      }`}
+                  >
+                    <div className="p-4 flex flex-col gap-2.5">
+                      {/* Row 1: Top badges row + bookmark/share */}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {user && !hasAppliedToJob(job._id) && (
+                            <div
+                              className="flex-shrink-0"
+                              onClick={(e) => toggleJobSelection(e, job._id)}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => { }}
+                                aria-label={`Select ${job?.jobDetails?.title || "job"}`}
+                                className="w-4 h-4 rounded accent-sky-600 cursor-pointer"
+                              />
+                            </div>
+                          )}
+                          {job?.jobDetails?.urgentHiring === "Yes" && (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full whitespace-nowrap dark:text-sky-300 dark:bg-sky-950/40 dark:border-sky-700">
+                              ⚡ Urgent
+                            </span>
+                          )}
+                          {hasAppliedToJob(job._id) && (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full whitespace-nowrap dark:text-emerald-300 dark:bg-emerald-950/40 dark:border-emerald-700">
+                              ✓ Applied
+                            </span>
+                          )}
+                          {!job?.jobDetails?.urgentHiring && !hasAppliedToJob(job._id) && (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full whitespace-nowrap dark:text-blue-300 dark:bg-blue-950/40 dark:border-blue-700">
+                              Easily apply
+                            </span>
+                          )}
+                        </div>
 
-                      <div className="flex items-center gap-1 flex-shrink-0">
-                        {user && (
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          {user && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleBookmark(job._id);
+                              }}
+                              className="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer flex-shrink-0"
+                              title={
+                                user?._id && job?.saveJob?.some((id) => String(id) === String(user._id))
+                                  ? "Remove bookmark"
+                                  : "Save job"
+                              }
+                              aria-label="Save job"
+                            >
+                              {user?._id && job?.saveJob?.some((id) => String(id) === String(user._id)) ? (
+                                <FaBookmark size={14} className="text-sky-600 dark:text-sky-400" />
+                              ) : (
+                                <CiBookmark size={18} className="text-slate-600 hover:text-sky-600 dark:text-slate-300" />
+                              )}
+                            </button>
+                          )}
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleBookmark(job._id);
+                              setShareJobId(shareJobId === job._id ? null : job._id);
                             }}
                             className="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer flex-shrink-0"
-                            title={
-                              user?._id && job?.saveJob?.some((id) => String(id) === String(user._id))
-                                ? "Remove bookmark"
-                                : "Save job"
-                            }
-                            aria-label="Save job"
+                            title="Share Job"
+                            aria-label="Share Job"
                           >
-                            {user?._id && job?.saveJob?.some((id) => String(id) === String(user._id)) ? (
-                              <FaBookmark size={14} className="text-sky-600 dark:text-sky-400" />
-                            ) : (
-                              <CiBookmark size={18} className="text-slate-600 hover:text-sky-600 dark:text-slate-300" />
-                            )}
+                            <Share2 size={15} />
                           </button>
-                        )}
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShareJobId(shareJobId === job._id ? null : job._id);
-                          }}
-                          className="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer flex-shrink-0"
-                          title="Share Job"
-                          aria-label="Share Job"
+                        </div>
+                      </div>
+
+                      {/* Share Card Popover */}
+                      {shareJobId === job._id && (
+                        <div
+                          ref={shareCardRef}
+                          onClick={(e) => e.stopPropagation()}
+                          className="relative z-10"
                         >
-                          <Share2 size={15} />
-                        </button>
-                      </div>
-                    </div>
+                          <ShareCard
+                            urlToShare={`${window.location.origin}/jobs/${job._id}`}
+                            jobTitle={job.jobDetails?.title}
+                            jobLocation={job.jobDetails?.location}
+                            jobSalary={job.jobDetails?.salary}
+                            jobDuration={job.jobDetails?.duration}
+                            jobType={job.jobDetails?.jobType}
+                            onClose={() => setShareJobId(null)}
+                          />
+                        </div>
+                      )}
 
-                    {/* Share Card Popover */}
-                    {shareJobId === job._id && (
-                      <div
-                        ref={shareCardRef}
-                        onClick={(e) => e.stopPropagation()}
-                        className="relative z-10"
+                      {/* Row 2: Job Title */}
+                      <h3
+                        className="text-[15px] sm:text-base font-bold text-slate-900 dark:text-white leading-snug line-clamp-2 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors"
+                        title={job.jobDetails?.title}
                       >
-                        <ShareCard
-                          urlToShare={`${window.location.origin}/jobs/${job._id}`}
-                          jobTitle={job.jobDetails?.title}
-                          jobLocation={job.jobDetails?.location}
-                          jobSalary={job.jobDetails?.salary}
-                          jobDuration={job.jobDetails?.duration}
-                          jobType={job.jobDetails?.jobType}
-                          onClose={() => setShareJobId(null)}
-                        />
-                      </div>
-                    )}
+                        {job.jobDetails?.title}
+                      </h3>
 
-                    {/* Row 2: Job Title */}
-                    <h3
-                      className="text-[15px] sm:text-base font-bold text-slate-900 dark:text-white leading-snug line-clamp-2 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors"
-                      title={job.jobDetails?.title}
-                    >
-                      {job.jobDetails?.title}
-                    </h3>
-
-                    {/* Row 3: Company + Location */}
-                    <div className="flex flex-col gap-0.5">
-                      <p className="text-sm text-slate-600 dark:text-gray-300 truncate font-medium">
-                        {job.jobDetails?.companyName}
-                      </p>
-                      {job.jobDetails?.location && (
-                        <p className="text-sm text-slate-500 dark:text-gray-400 truncate">
-                          {job.jobDetails.location}
+                      {/* Row 3: Company + Location */}
+                      <div className="flex flex-col gap-0.5">
+                        <p className="text-sm text-slate-600 dark:text-gray-300 truncate font-medium">
+                          {job.jobDetails?.companyName}
                         </p>
+                        {job.jobDetails?.location && (
+                          <p className="text-sm text-slate-500 dark:text-gray-400 truncate">
+                            {job.jobDetails.location}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Row 4: Salary, Job Type (beside salary in sky blue), and Shift */}
+                      {(formattedSalary || job.jobDetails?.jobType || job.jobDetails?.shift) && (
+                        <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                          {formattedSalary && (
+                            <span className="inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 rounded-md">
+                              <Check size={12} className="text-emerald-600 flex-shrink-0" />
+                              {formattedSalary} a month
+                            </span>
+                          )}
+                          {job.jobDetails?.jobType && (
+                            <span className="inline-flex items-center gap-1 text-xs font-semibold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 px-2.5 py-1 rounded-md">
+                              <Check size={12} className="text-sky-600 dark:text-sky-400 flex-shrink-0" />
+                              {job.jobDetails.jobType}
+                            </span>
+                          )}
+                          {job.jobDetails?.shift && (
+                            <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-gray-700/50 border border-slate-200 dark:border-gray-600 px-2.5 py-1 rounded-md">
+                              <Clock size={12} className="text-slate-400 flex-shrink-0" />
+                              {job.jobDetails.shift}
+                            </span>
+                          )}
+                        </div>
                       )}
                     </div>
-
-                    {/* Row 4: Salary, Job Type (beside salary in sky blue), and Shift */}
-                    {(formattedSalary || job.jobDetails?.jobType || job.jobDetails?.shift) && (
-                      <div className="flex flex-wrap items-center gap-2 pt-0.5">
-                        {formattedSalary && (
-                          <span className="inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-semibold text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 rounded-md">
-                            <Check size={12} className="text-emerald-600 flex-shrink-0" />
-                            {formattedSalary} a month
-                          </span>
-                        )}
-                        {job.jobDetails?.jobType && (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 px-2.5 py-1 rounded-md">
-                            <Check size={12} className="text-sky-600 dark:text-sky-400 flex-shrink-0" />
-                            {job.jobDetails.jobType}
-                          </span>
-                        )}
-                        {job.jobDetails?.shift && (
-                          <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-gray-700/50 border border-slate-200 dark:border-gray-600 px-2.5 py-1 rounded-md">
-                            <Clock size={12} className="text-slate-400 flex-shrink-0" />
-                            {job.jobDetails.shift}
-                          </span>
-                        )}
-                      </div>
-                    )}
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
             </div>
           </div>
 
@@ -805,7 +802,7 @@ const JobsForYou = ({ jobs = [] }) => {
                       )}
                     </button>
                   )}
-                  
+
                 </div>
 
                 <h3 className="text-2xl font-bold text-sky-900 truncate pr-24 tracking-wide dark:text-white">
@@ -845,7 +842,7 @@ const JobsForYou = ({ jobs = [] }) => {
                 <div className="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-2 xl:gap-3 pt-1">
                   <div className="xl:flex-1 px-3 py-1.5 font-bold text-sky-900 rounded-xl bg-gradient-to-r from-sky-50 to-cyan-50 border-2 border-sky-300 flex items-center justify-center shadow-sm dark:from-sky-900/30 dark:to-cyan-900/30 dark:border-sky-700 dark:text-white">
                     {typeof selectedJob?.jobDetails?.salary === "string" &&
-                    selectedJob.jobDetails.salary.trim() ? (
+                      selectedJob.jobDetails.salary.trim() ? (
                       (() => {
                         const parts = selectedJob.jobDetails.salary
                           .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
@@ -875,11 +872,10 @@ const JobsForYou = ({ jobs = [] }) => {
 
                 <div className="pt-2">
                   <div
-                    className={`w-full py-2.5 px-6 rounded-xl text-white font-bold text-center text-lg shadow-md transition-all duration-300 ${
-                      isApplied
-                        ? "bg-gradient-to-r from-green-500 to-emerald-500 cursor-not-allowed"
-                        : "bg-gradient-to-r from-blue-600 to-sky-600 hover:from-sky-700 hover:to-blue-700 cursor-pointer transform hover:scale-[1.02]"
-                    }`}
+                    className={`w-full py-2.5 px-6 rounded-xl text-white font-bold text-center text-lg shadow-md transition-all duration-300 ${isApplied
+                      ? "bg-gradient-to-r from-green-500 to-emerald-500 cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-600 to-sky-600 hover:from-sky-700 hover:to-blue-700 cursor-pointer transform hover:scale-[1.02]"
+                      }`}
                   >
                     {isApplied ? (
                       <div className="flex items-center justify-center gap-2">
@@ -906,9 +902,8 @@ const JobsForYou = ({ jobs = [] }) => {
                       >
                         <button
                           type="button"
-                          className={`w-full flex items-center justify-center gap-2 ${
-                            !profileComplete ? "cursor-not-allowed" : ""
-                          }`}
+                          className={`w-full flex items-center justify-center gap-2 ${!profileComplete ? "cursor-not-allowed" : ""
+                            }`}
                           onClick={() => handleApply(selectedJob._id)}
                           disabled={!profileComplete}
                         >
@@ -916,11 +911,10 @@ const JobsForYou = ({ jobs = [] }) => {
                         </button>
                         {!profileComplete && (
                           <div
-                            className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 transition-all duration-300 z-50 ${
-                              isHovered
-                                ? "opacity-100 visible translate-y-0"
-                                : "opacity-0 invisible translate-y-2"
-                            }`}
+                            className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-4 transition-all duration-300 z-50 ${isHovered
+                              ? "opacity-100 visible translate-y-0"
+                              : "opacity-0 invisible translate-y-2"
+                              }`}
                           >
                             <div className="relative w-80 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-2xl border border-purple-500/20 backdrop-blur-xl dark:from-slate-900 dark:to-slate-950">
                               <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-violet-500/10 to-purple-500/10 animate-pulse" />
@@ -1009,45 +1003,40 @@ const JobsForYou = ({ jobs = [] }) => {
 
         {/* PAGINATION */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 sm:gap-2.5 my-4 sm:my-5 w-full animate-pagination select-none">
+          <div className="flex flex-nowrap items-center justify-center gap-4 sm:gap-2 my-4 sm:my-5 w-full px-1 py-2 animate-pagination select-none overflow-x-auto scrollbar-hide">
             {currentPage > 1 && (
               <button
                 type="button"
                 onClick={() => handlePageChange(currentPage - 1)}
-                className="group px-4 py-2 rounded-lg bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium text-sm transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                className="group px-3 sm:px-4 py-2 rounded-lg bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium text-xs sm:text-sm transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 flex items-center justify-center cursor-pointer whitespace-nowrap"
               >
-                <span className="inline-block transition-transform duration-200 group-hover:-translate-x-0.5">
-                  ←
-                </span>
                 <span>Previous</span>
               </button>
             )}
-            <div className="flex items-center gap-1.5 sm:gap-2">
+
+            <div className="flex flex-nowrap items-center justify-center gap-2 sm:gap-2">
               {getPageNumbers().map((pageNum) => (
                 <button
                   key={pageNum}
                   type="button"
                   onClick={() => handlePageChange(pageNum)}
-                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg text-sm font-semibold transition-all duration-300 flex items-center justify-center cursor-pointer active:scale-90 ${
-                    currentPage === pageNum
-                      ? "bg-blue-700 dark:bg-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105 ring-2 ring-blue-400 ring-offset-2 dark:ring-offset-gray-900"
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-300 flex items-center justify-center cursor-pointer active:scale-90 whitespace-nowrap ${currentPage === pageNum
+                      ? "bg-blue-700 dark:bg-blue-600 text-white shadow-md shadow-blue-500/30 scale-105 ring-2 ring-blue-400 ring-offset-2 dark:ring-offset-gray-900"
                       : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-blue-50 dark:hover:bg-gray-700 hover:border-blue-400 hover:-translate-y-0.5 hover:shadow-sm"
-                  }`}
+                    }`}
                 >
                   {pageNum}
                 </button>
               ))}
             </div>
+
             {currentPage < totalPages && (
               <button
                 type="button"
                 onClick={() => handlePageChange(currentPage + 1)}
-                className="group px-4 py-2 rounded-lg bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium text-sm transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 flex items-center gap-1.5 cursor-pointer"
+                className="group px-3 sm:px-4 py-2 rounded-lg bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium text-xs sm:text-sm transition-all duration-300 shadow-sm hover:shadow-md active:scale-95 flex items-center justify-center cursor-pointer whitespace-nowrap"
               >
                 <span>Next</span>
-                <span className="inline-block transition-transform duration-200 group-hover:translate-x-0.5">
-                  →
-                </span>
               </button>
             )}
           </div>
@@ -1078,7 +1067,7 @@ const JobsForYou = ({ jobs = [] }) => {
 
               <p className="mt-2 px-3 py-1 font-semibold text-gray-700 dark:text-gray-300 rounded-md w-fit bg-gray-200 dark:bg-gray-700 max-w-full break-words">
                 {typeof selectedJob?.jobDetails?.salary === "string" &&
-                selectedJob.jobDetails.salary.trim() ? (
+                  selectedJob.jobDetails.salary.trim() ? (
                   (() => {
                     const parts = selectedJob.jobDetails.salary
                       .replace(/(\d{1,3})(?=(\d{3})+(?!\d))/g, "$1,")
@@ -1172,11 +1161,10 @@ const JobsForYou = ({ jobs = [] }) => {
                 <div className="relative group w-full max-w-md">
                   <button
                     type="button"
-                    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg w-full ${
-                      !profileComplete
-                        ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed text-white"
-                        : "bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white"
-                    }`}
+                    className={`flex items-center justify-center gap-2 px-6 py-3 rounded-lg w-full ${!profileComplete
+                      ? "bg-gray-400 dark:bg-gray-600 cursor-not-allowed text-white"
+                      : "bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white"
+                      }`}
                     onClick={() => handleApply(selectedJob._id)}
                     disabled={!profileComplete}
                   >

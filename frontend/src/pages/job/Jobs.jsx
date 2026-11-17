@@ -194,7 +194,7 @@ export default function Jobs() {
           </div>
 
           <div className="flex gap-4 mt-4 items-start">
-            <aside className="hidden sm:block w-56 lg:w-64 flex-shrink-0 sticky top-[80px] h-[1080px] overflow-y-auto">
+            <aside className="hidden sm:block w-56 lg:w-72 flex-shrink-0 sticky top-[80px] h-[1080px] overflow-y-auto">
               <FilterCard
                 filters={filters}
                 onFilterChange={handleFilterChange}
@@ -209,7 +209,7 @@ export default function Jobs() {
                   onClick={() => setShowMobileFilter(false)}
                   aria-hidden="true"
                 />
-                <div className="absolute inset-x-0 top-16 bottom-0 z-[101] overflow-hidden">
+                <div className="absolute m-1 inset-x-0 top-16 bottom-0 z-[101] overflow-y-auto">
                   <FilterCard
                     filters={filters}
                     onFilterChange={handleFilterChange}

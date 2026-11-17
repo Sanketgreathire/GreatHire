@@ -9,6 +9,21 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
+const isValidIndianPhone = (phone) => {
+  if (!phone) return false;
+  const digits = String(phone).replace(/\D/g, ""); // remove all non-digits
+  // Accept: 10 digits starting with 6-9, OR 12 digits starting with 91
+  if (/^[6-9]\d{9}$/.test(digits)) return true;
+  if (/^91[6-9]\d{9}$/.test(digits)) return true;
+  return false;
+};
+
+// ✅ Helper: normalize to 10-digit
+const normalizePhone = (phone) => {
+  const digits = String(phone).replace(/\D/g, "");
+  return digits.length === 12 && digits.startsWith("91") ? digits.slice(2) : digits;
+};
+
 // POST /api/v1/courses/counsellor/send-otp  (public)
 export const sendCounsellorOtp = async (req, res) => {
   const { email, phone } = req.body;
@@ -97,7 +112,19 @@ export const submitEnquiry = async (req, res) => {
       return res.status(400).json({ success: false, message: "Required fields missing" });
     }
 
-    const entry = await CourseEnquiry.create({ name, email, phone, courseName, fee, mode, batch, type });
+    // ✅ PHONE VALIDATION
+    if (!isValidIndianPhone(phone)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid 10-digit Indian mobile number (starting with 6-9).",
+      });
+    }
+
+    const cleanPhone = normalizePhone(phone); // store only 10 digits
+
+    const entry = await CourseEnquiry.create({
+      name, email, phone: cleanPhone, courseName, fee, mode, batch, type,
+    });
     return res.status(201).json({ success: true, message: "Submitted successfully", data: entry });
 
   } catch (error) {
@@ -105,6 +132,8 @@ export const submitEnquiry = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+
 
 // GET /api/v1/courses/admin/all  (admin)
 export const getAllEnquiries = async (req, res) => {
@@ -185,6 +214,16 @@ export const createCourseOrder = async (req, res) => {
     if (!name || !email || !phone || !courseName || !amount)
       return res.status(400).json({ success: false, message: "Required fields missing" });
 
+    // ✅ PHONE VALIDATION
+    if (!isValidIndianPhone(phone)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid 10-digit Indian mobile number (starting with 6-9).",
+      });
+    }
+
+    const cleanPhone = normalizePhone(phone);
+
     const order = await razorpay.orders.create({
       amount: amount * 100,
       currency: "INR",
@@ -192,7 +231,7 @@ export const createCourseOrder = async (req, res) => {
     });
 
     const entry = await CourseEnquiry.create({
-      name, email, phone, courseName,
+      name, email, phone: cleanPhone, courseName,
       fee: `₹${amount.toLocaleString("en-IN")}`,
       batch: batch || "",
       mode: mode || "Online",

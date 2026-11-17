@@ -284,7 +284,7 @@ const Users = () => {
         .then(({ data }) => {
           if (data.success) setSourcedCount(data.stats.total);
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }, [user]);
 
@@ -649,11 +649,25 @@ const Users = () => {
                           </div>
                         </TableCell>
 
-                        <TableCell className="text-center text-gray-700 dark:text-gray-300">
+                        <TableCell className="text-center text-sm whitespace-nowrap">
                           {(() => {
                             const phone = formatPhone(u.phoneNumber);
-                            if (phone === "N/A") return "N/A";
-                            return `+91-${phone.slice(0, 5)} ${phone.slice(5)}`;
+
+                            // If invalid, show styled N/A badge
+                            if (phone === "N/A") {
+                              return (
+                                <span className="inline-block px-2 py-1 text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-full">
+                                  N/A
+                                </span>
+                              );
+                            }
+
+                            // Valid number — formatted with +91 prefix and clean spacing
+                            return (
+                              <span className="text-gray-700 dark:text-gray-300">
+                                +91&nbsp;{phone.slice(0, 5)}&nbsp;{phone.slice(5)}
+                              </span>
+                            );
                           })()}
                         </TableCell>
 
@@ -665,11 +679,10 @@ const Users = () => {
 
                         <TableCell className="text-center">
                           <span
-                            className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                              u.applicationCount > 0
+                            className={`px-2 py-1 rounded-full text-xs font-semibold ${u.applicationCount > 0
                                 ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
                                 : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
-                            }`}
+                              }`}
                           >
                             {u.applicationCount}
                           </span>
@@ -808,11 +821,10 @@ const Users = () => {
                           <Button
                             key={p}
                             onClick={() => setPage(p)}
-                            className={`min-w-[38px] px-3 py-2 rounded-md transition-colors ${
-                              page === p
+                            className={`min-w-[38px] px-3 py-2 rounded-md transition-colors ${page === p
                                 ? "bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600"
                                 : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-                            }`}
+                              }`}
                           >
                             {p}
                           </Button>

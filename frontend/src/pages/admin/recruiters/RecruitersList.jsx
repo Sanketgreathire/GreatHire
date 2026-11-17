@@ -1,4 +1,4 @@
-import  { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import PillSelect from "@/components/shared/PillSelect";
@@ -51,21 +51,26 @@ const ITEMS_PER_PAGE = 20;
 
 
 // ✅ Format phone — keep only 10 digits, else "N/A"
+// ✅ Format phone — keep only 10 digits, format as "+91 98765 43210", else "N/A"
 const formatPhone = (phone) => {
   if (!phone) return "N/A";
   const digits = String(phone).replace(/\D/g, "");
 
-  // Strip country code if present
   let cleaned = digits;
   if (cleaned.length === 12 && cleaned.startsWith("91")) {
-    cleaned = cleaned.slice(2); // 919876543210 → 9876543210
+    cleaned = cleaned.slice(2);
   } else if (cleaned.length === 11 && cleaned.startsWith("0")) {
-    cleaned = cleaned.slice(1); // 09876543210 → 9876543210
+    cleaned = cleaned.slice(1);
   } else if (cleaned.length === 11 && cleaned.startsWith("1")) {
-    cleaned = cleaned.slice(1); // US numbers
+    cleaned = cleaned.slice(1);
   }
 
-  return cleaned.length === 10 ? cleaned : "N/A";
+  if (cleaned.length !== 10 || !/^[6-9]/.test(cleaned)) {
+    return "N/A";
+  }
+
+  // ✅ Return formatted
+  return `+91 ${cleaned.slice(0, 5)} ${cleaned.slice(5)}`;
 };
 
 // ✅ Fallback text for empty fields
@@ -396,7 +401,7 @@ const RecruitersList = () => {
 
   useEffect(() => {
     if (user) fetchRecruiterList();
-     
+
   }, [user]);
 
   // Toggle active
@@ -1028,8 +1033,18 @@ const RecruitersList = () => {
                           {orNA(r.companyName)}
                         </TableCell>
 
-                        <TableCell className="text-gray-900 dark:text-gray-100 text-sm">
-                          {formatPhone(r.phone)}
+                        <TableCell className="text-center text-sm whitespace-nowrap">
+                          {formatPhone(r.phone) === "N/A" ? (
+                            <span className="inline-block px-2 py-1 text-xs font-semibold text-red-600
+                             dark:text-red-400 bg-red-50 dark:bg-red-900/30  
+                              dark:border-red-800  ">
+                              N/A
+                            </span>
+                          ) : (
+                            <span className="text-gray-900 dark:text-gray-100">
+                              {formatPhone(r.phone)}
+                            </span>
+                          )}
                         </TableCell>
 
                         <TableCell className="text-gray-900 dark:text-gray-100 text-sm">

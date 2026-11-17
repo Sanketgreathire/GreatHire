@@ -1,4 +1,4 @@
-import  { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +16,7 @@ import {
   Trash,
   Eye,
   Building2,
- 
+
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Select, MenuItem, Switch } from "@mui/material";
@@ -88,15 +88,17 @@ const CompactPagination = ({ page, setPage, totalPages }) => {
   }, [page, totalPages]);
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 w-full px-1">
+      {/* Previous — icon on mobile, text on desktop */}
       <Button
         size="sm"
         variant="ghost"
         disabled={page === 1}
         onClick={() => setPage((p) => Math.max(1, p - 1))}
-        className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+        className="text-gray-700 dark:text-gray-300 border border-gray-500 hover:bg-gray-300 dark:hover:bg-gray-700 disabled:opacity-50 px-2 sm:px-3 text-xs sm:text-sm whitespace-nowrap"
       >
-        Previous
+        <span className="hidden sm:inline">Previous</span>
+        <span className="sm:hidden">Prev</span>
       </Button>
 
       {pageNumbers[0] > 1 && (
@@ -104,11 +106,13 @@ const CompactPagination = ({ page, setPage, totalPages }) => {
           <Button
             size="sm"
             onClick={() => setPage(1)}
-            className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+            className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 w-8 h-8 sm:w-9 sm:h-9 p-0 text-xs sm:text-sm"
           >
             1
           </Button>
-          {pageNumbers[0] > 2 && <span className="px-2 text-gray-500 dark:text-gray-400">…</span>}
+          {pageNumbers[0] > 2 && (
+            <span className="px-1 text-gray-500 dark:text-gray-400 text-xs">…</span>
+          )}
         </>
       )}
 
@@ -117,10 +121,10 @@ const CompactPagination = ({ page, setPage, totalPages }) => {
           key={p}
           size="sm"
           onClick={() => setPage(p)}
-          className={page === p
-            ? "bg-blue-700 dark:bg-blue-600 text-white hover:bg-blue-800 dark:hover:bg-blue-700"
-            : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
-          }
+          className={`w-8 h-8 sm:w-9 sm:h-9 p-0 text-xs sm:text-sm ${page === p
+              ? "bg-blue-700 dark:bg-blue-600 text-white hover:bg-blue-800 dark:hover:bg-blue-700"
+              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+            }`}
         >
           {p}
         </Button>
@@ -129,26 +133,28 @@ const CompactPagination = ({ page, setPage, totalPages }) => {
       {pageNumbers[pageNumbers.length - 1] < totalPages && (
         <>
           {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && (
-            <span className="px-2 text-gray-500 dark:text-gray-400">…</span>
+            <span className="px-1 text-gray-500 dark:text-gray-400 text-xs">…</span>
           )}
           <Button
             size="sm"
             onClick={() => setPage(totalPages)}
-            className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+            className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 w-8 h-8 sm:w-9 sm:h-9 p-0 text-xs sm:text-sm"
           >
             {totalPages}
           </Button>
         </>
       )}
 
+      {/* Next — icon on mobile, text on desktop */}
       <Button
         size="sm"
         variant="ghost"
         disabled={page === totalPages || totalPages === 0}
         onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-        className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+        className="text-gray-700 dark:text-gray-300 border border-gray-500 hover:bg-gray-300 dark:hover:bg-gray-700 disabled:opacity-50 px-2 sm:px-3 text-xs sm:text-sm whitespace-nowrap"
       >
-        Next
+        <span className="hidden sm:inline">Next</span>
+        <span className="sm:hidden">Next</span>
       </Button>
     </div>
   );
@@ -159,7 +165,6 @@ CompactPagination.propTypes = {
   setPage: PropTypes.func.isRequired,
   totalPages: PropTypes.number.isRequired,
 };
-
 const CompanyList = () => {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("All");
@@ -210,25 +215,25 @@ const CompanyList = () => {
   //   }
   // };
 
-  
-const fetchCompanyList = async () => {
-  setIsLoadingCompanies(true);
 
-  try {
-    const response = await axios.get(
-      `${ADMIN_COMPANY_DATA_API_END_POINT}/company-list`,
-      { withCredentials: true }
-    );
+  const fetchCompanyList = async () => {
+    setIsLoadingCompanies(true);
 
-    if (response.data.success) {
-      setCompanyList(response.data.companies);
+    try {
+      const response = await axios.get(
+        `${ADMIN_COMPANY_DATA_API_END_POINT}/company-list`,
+        { withCredentials: true }
+      );
+
+      if (response.data.success) {
+        setCompanyList(response.data.companies);
+      }
+    } catch (err) {
+      console.log(`error in company fetching ${err}`);
+    } finally {
+      setIsLoadingCompanies(false);
     }
-  } catch (err) {
-    console.log(`error in company fetching ${err}`);
-  } finally {
-    setIsLoadingCompanies(false);
-  }
-};
+  };
 
 
   const fetchDeletedCompanyList = async () => {
@@ -548,107 +553,135 @@ const fetchCompanyList = async () => {
                 )}
               </TableBody> */}
 
-              
-<TableBody>
-  {isLoadingCompanies ? (
-    Array.from({ length: 6 }).map((_, i) => (
-      <SkeletonRow key={i} />
-    ))
-  ) : paginatedCompanies.length > 0 ? (
-    paginatedCompanies.map((company) => (
-      <TableRow
-        key={company._id}
-        className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-200 dark:border-gray-700"
-      >
-        <TableCell className="font-medium text-gray-900 dark:text-gray-100">
-          {company.companyName}
-        </TableCell>
 
-        <TableCell className="break-all text-gray-700 dark:text-gray-300">
-          {company.email?.trim() || "N/A"}
-        </TableCell>
+              <TableBody>
+                {isLoadingCompanies ? (
+                  Array.from({ length: 6 }).map((_, i) => (
+                    <SkeletonRow key={i} />
+                  ))
+                ) : paginatedCompanies.length > 0 ? (
+                  paginatedCompanies.map((company) => (
+                    <TableRow
+                      key={company._id}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-200 dark:border-gray-700"
+                    >
+                      <TableCell className="font-medium text-gray-900 dark:text-gray-100">
+                        {company.companyName}
+                      </TableCell>
 
-        <TableCell className="text-gray-700 dark:text-gray-300">
-          {company.phone?.toString().trim() || "N/A"}
-        </TableCell>
+                      <TableCell className="break-all text-gray-700 dark:text-gray-300">
+                        {company.email?.trim() || "N/A"}
+                      </TableCell>
 
-        <TableCell className="break-all text-gray-700 dark:text-gray-300">
-          {company.adminEmail?.trim() || "N/A"}
-        </TableCell>
+                      <TableCell className="text-center text-sm whitespace-nowrap">
+                        {(() => {
+                          if (!company.phone) {
+                            return (
+                              <span className="inline-block px-2 py-1 text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-full">
+                                N/A
+                              </span>
+                            );
+                          }
 
-        <TableCell>
-          <span
-            className={`px-3 py-1 text-xs font-semibold rounded-full ${
-              company.isActive
-                ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
-                : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
-            }`}
-          >
-            {company.isActive ? "Active" : "Deactive"}
-          </span>
-        </TableCell>
+                          const digits = String(company.phone).replace(/\D/g, "");
 
-        <TableCell>
-          <div className="flex items-center gap-3">
-            <Eye
-              className="text-blue-500 dark:text-blue-400 cursor-pointer hover:scale-110 transition"
-              size={20}
-              onClick={() =>
-                navigate(
-                  `/admin/for-admin/company-details/${company._id}`
-                )
-              }
-            />
+                          // Valid Indian mobile number: 10 digits starting with 6-9
+                          if (/^[6-9]\d{9}$/.test(digits)) {
+                            return (
+                              <span className="text-gray-700 dark:text-gray-300">
+                                +91&nbsp;{digits.slice(0, 5)}&nbsp;{digits.slice(5)}
+                              </span>
+                            );
+                          }
 
-            {loading[company._id] ? (
-              <span className="text-gray-400 dark:text-gray-500">
-                ...
-              </span>
-            ) : (
-              <Switch
-                checked={company.isActive}
-                onChange={() =>
-                  toggleActive(
-                    company.email,
-                    company.adminEmail,
-                    company._id,
-                    !company.isActive
-                  )
-                }
-                color="primary"
-              />
-            )}
+                          // Invalid → show styled N/A badge
+                          return (
+                            <span
+                              className="inline-block px-2 py-1 text-xs font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-full"
+                              title={`Invalid input: ${company.phone}`}
+                            >
+                              N/A
+                            </span>
+                          );
+                        })()}
+                      </TableCell>
 
-            {dloading[company._id] ? (
-              <span className="text-gray-400 dark:text-gray-500">
-                ...
-              </span>
-            ) : (
-              <Trash
-                className="text-red-500 dark:text-red-400 cursor-pointer hover:text-red-700 dark:hover:text-red-300 transition"
-                size={20}
-                onClick={() => {
-                  setCompanyId(company._id);
-                  setShowDeleteModal(true);
-                }}
-              />
-            )}
-          </div>
-        </TableCell>
-      </TableRow>
-    ))
-  ) : (
-    <TableRow>
-      <TableCell
-        colSpan={6}
-        className="text-center py-8 text-gray-500 dark:text-gray-400"
-      >
-        No companies found
-      </TableCell>
-    </TableRow>
-  )}
-</TableBody>
- 
+                      <TableCell className="break-all text-gray-700 dark:text-gray-300">
+                        {company.adminEmail?.trim() || "N/A"}
+                      </TableCell>
+
+                      <TableCell>
+                        <span
+                          className={`px-3 py-1 text-xs font-semibold rounded-full ${company.isActive
+                            ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                            : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400"
+                            }`}
+                        >
+                          {company.isActive ? "Active" : "Deactive"}
+                        </span>
+                      </TableCell>
+
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Eye
+                            className="text-blue-500 dark:text-blue-400 cursor-pointer hover:scale-110 transition"
+                            size={20}
+                            onClick={() =>
+                              navigate(
+                                `/admin/for-admin/company-details/${company._id}`
+                              )
+                            }
+                          />
+
+                          {loading[company._id] ? (
+                            <span className="text-gray-400 dark:text-gray-500">
+                              ...
+                            </span>
+                          ) : (
+                            <Switch
+                              checked={company.isActive}
+                              onChange={() =>
+                                toggleActive(
+                                  company.email,
+                                  company.adminEmail,
+                                  company._id,
+                                  !company.isActive
+                                )
+                              }
+                              color="primary"
+                            />
+                          )}
+
+                          {dloading[company._id] ? (
+                            <span className="text-gray-400 dark:text-gray-500">
+                              ...
+                            </span>
+                          ) : (
+                            <Trash
+                              className="text-red-500 dark:text-red-400 cursor-pointer hover:text-red-700 dark:hover:text-red-300 transition"
+                              size={20}
+                              onClick={() => {
+                                setCompanyId(company._id);
+                                setShowDeleteModal(true);
+                              }}
+                            />
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      colSpan={6}
+                      className="text-center py-8 text-gray-500 dark:text-gray-400"
+                    >
+                      No companies found
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+
             </Table>
           </div>
 

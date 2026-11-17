@@ -151,7 +151,7 @@ const Recruiters = () => {
   const [dloadingMap, setDLoadingMap] = useState({});
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedRecruiter, setSelectedRecruiter] = useState(null);
-  
+
   // Bulk selection states
   const [selectedRecruiters, setSelectedRecruiters] = useState([]);
   const [isSendingBulkEmail, setIsSendingBulkEmail] = useState(false);
@@ -295,23 +295,23 @@ const Recruiters = () => {
       recruiter.fullname?.toLowerCase().includes(q) ||
       recruiter.email?.toLowerCase().includes(q) ||
       recruiter.phone?.toLowerCase().includes(q);
-    
+
     let matchesStatus = true;
     if (status === "Active") {
       matchesStatus = recruiter.isActive === true;
     } else if (status === "Deactive") {
       matchesStatus = recruiter.isActive === false;
     }
-    
+
     return matchesSearch && matchesStatus;
   });
 
   // Get inactive recruiters for bulk selection
   const inactiveRecruiters = filteredRecruiters.filter(r => !r.isActive);
-  
+
   // Determine if we should show checkboxes
   const showCheckboxColumn = status === "Deactive";
-  
+
   // Bulk selection handlers
   const handleSelectAll = (checked) => {
     if (checked) {
@@ -452,7 +452,7 @@ const Recruiters = () => {
                 <option value="Deactive">Deactive</option>
               </select>
             </div>
-            
+
             {/* Select All checkbox - only show for deactive status */}
             {showCheckboxColumn && (
               <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded border border-blue-200">
@@ -524,10 +524,10 @@ const Recruiters = () => {
             <TableBody>
               {isFetching
                 ? Array.from({ length: 6 }).map((_, i) => (
-                    <SkeletonRow key={i} showCheckbox={showCheckboxColumn} />
-                  ))
+                  <SkeletonRow key={i} showCheckbox={showCheckboxColumn} />
+                ))
                 : paginatedRecruiters.length > 0
-                ? paginatedRecruiters.map((recruiter) => (
+                  ? paginatedRecruiters.map((recruiter) => (
                     <TableRow
                       key={recruiter._id}
                       className="hover:bg-gray-50 transition-colors"
@@ -571,8 +571,21 @@ const Recruiters = () => {
                         </div>
                       </TableCell>
 
-                      <TableCell className="whitespace-nowrap">
-                        {recruiter.phone}
+                      <TableCell className="whitespace-nowrap text-sm text-gray-600 dark:text-gray-400">
+                        {(() => {
+                          if (!recruiter.phone) return <span className="text-gray-400 italic">N/A</span>;
+
+                          // Remove spaces, dashes, and non-digits
+                          const digits = String(recruiter.phone).replace(/\D/g, "");
+
+                          // Check for valid 10-digit Indian mobile number (starts with 6-9)
+                          if (/^[6-9]\d{9}$/.test(digits)) {
+                            return <span>+91&nbsp;{digits.slice(0, 5)}&nbsp;{digits.slice(5)}</span>;
+                          }
+
+                          // If it's invalid, show N/A
+                          return <span className="text-gray-400 italic">N/A</span>;
+                        })()}
                       </TableCell>
 
                       <TableCell className="whitespace-nowrap">
@@ -585,11 +598,10 @@ const Recruiters = () => {
 
                       <TableCell>
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                            recruiter.isActive
+                          className={`px-2 py-1 rounded-full text-xs font-semibold ${recruiter.isActive
                               ? "bg-green-100 text-green-800"
                               : "bg-red-100 text-red-800"
-                          }`}
+                            }`}
                         >
                           {recruiter.isActive ? "Active" : "Deactive"}
                         </span>
@@ -662,7 +674,7 @@ const Recruiters = () => {
                       </TableCell>
                     </TableRow>
                   ))
-                : (
+                  : (
                     <TableRow>
                       <TableCell colSpan={showCheckboxColumn ? 7 : 6} className="text-center py-8">
                         <div className="text-gray-500">
@@ -682,9 +694,9 @@ const Recruiters = () => {
             {filteredRecruiters.length === 0
               ? 0
               : Math.min(
-                  (page - 1) * ITEMS_PER_PAGE + 1,
-                  filteredRecruiters.length
-                )}{" "}
+                (page - 1) * ITEMS_PER_PAGE + 1,
+                filteredRecruiters.length
+              )}{" "}
             to{" "}
             {Math.min(
               page * ITEMS_PER_PAGE,

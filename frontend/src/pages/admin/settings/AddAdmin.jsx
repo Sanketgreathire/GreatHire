@@ -77,12 +77,12 @@ const AddAdmin = () => {
   return (
     <>
       <Navbar linkName="Add Admin" />
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 px-4 pt-6 pb-8 transition-colors">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 px-4 pt-24 pb-8 transition-colors flex justify-center items-start">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-90 backdrop-blur-md shadow-xl dark:shadow-2xl dark:shadow-gray-900/50 rounded-xl p-8 w-full max-w-md relative overflow-hidden mt-0 md:mt-[-50px]"
+          className="bg-white dark:bg-gray-800 bg-opacity-90 dark:bg-opacity-90 backdrop-blur-md shadow-xl dark:shadow-2xl dark:shadow-gray-900/50 rounded-xl p-8 w-full max-w-md relative overflow-hidden"
         >
           <motion.div
             initial={{ scale: 0 }}
@@ -93,44 +93,20 @@ const AddAdmin = () => {
           {/* Back Button */}
           <button
             onClick={() => navigate(-1)}
-            className="absolute top-2 left-4 md:top-5 md:left-6 flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-lg z-20 transition-colors"
+            className="absolute top-4 left-4 flex items-center text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white text-lg z-20 transition-colors"
           >
-            <FiArrowLeft size={30} className="mr-2" />
+            <FiArrowLeft size={30} />
           </button>
-          <h2 className="flex items-center justify-center gap-4 text-2xl font-bold text-center text-gray-700 dark:text-gray-200 mb-6">
+          <h2 className="flex items-center justify-center gap-4 text-2xl font-bold text-center text-gray-700 dark:text-gray-200 mb-6 pt-6">
             <RiAdminLine size={45} className="text-blue-700 dark:text-blue-500" />
             <span>Add New Admin</span>
           </h2>
           <form className="space-y-5 relative z-10" onSubmit={handleSubmit}>
             {[
-              {
-                label: "Full Name",
-                name: "fullname",
-                type: "text",
-                placeholder: "Enter full name",
-                icon: <FiUser size={25} />,
-              },
-              {
-                label: "Work Email",
-                name: "email",
-                type: "email",
-                placeholder: "mail@domain.com",
-                icon: <FiMail size={25} />,
-              },
-              {
-                label: "Mobile Number",
-                name: "phoneNumber",
-                type: "text",
-                placeholder: "Contact number",
-                icon: <FiPhone size={25} />,
-              },
-              {
-                label: "Password",
-                name: "password",
-                type: "password",
-                placeholder: "Min 8 characters",
-                icon: <FiLock size={25} />,
-              },
+              { label: "Full Name", name: "fullname", type: "text", placeholder: "Enter full name", icon: <FiUser size={25} /> },
+              { label: "Work Email", name: "email", type: "email", placeholder: "mail@domain.com", icon: <FiMail size={25} /> },
+              { label: "Mobile Number", name: "phoneNumber", type: "text", placeholder: "Contact number", icon: <FiPhone size={25} /> },
+              { label: "Password", name: "password", type: "password", placeholder: "Min 8 characters", icon: <FiLock size={25} /> },
             ].map(({ label, name, type, placeholder, icon }) => (
               <div key={name} className="relative">
                 <label className="block text-gray-600 dark:text-gray-300 font-semibold text-sm mb-1">
@@ -156,9 +132,8 @@ const AddAdmin = () => {
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.2 }}
               type="submit"
-              className={`w-full bg-blue-700 dark:bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-800 dark:hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 focus:outline-none text-sm font-semibold transition-all ${
-                loading ? "cursor-not-allowed opacity-75" : ""
-              }`}
+              className={`w-full bg-blue-700 dark:bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-800 dark:hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500 focus:outline-none text-sm font-semibold transition-all ${loading ? "cursor-not-allowed opacity-75" : ""
+                }`}
               disabled={loading}
             >
               {loading ? "Adding..." : "Add Admin"}

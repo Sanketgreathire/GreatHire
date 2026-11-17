@@ -271,10 +271,10 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
   };
 
   const handlePickSearchResult = (loc) => {
-  if (!filters.location?.includes(loc)) handleLocationToggle(loc);
-  setActiveSearchLocation(loc);
-  setLocationSearch("");
-};
+    if (!filters.location?.includes(loc)) handleLocationToggle(loc);
+    setActiveSearchLocation(loc);
+    setLocationSearch("");
+  };
 
   const handleCheckboxChange = (category, value) => {
     const current = Array.isArray(filters[category]) ? filters[category] : [];
@@ -289,9 +289,9 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
   };
 
   const handleDatePostedChange = (opt) => {
-  const alreadySelected = filters.datePosted?.[0] === opt;
-  onFilterChange?.({ ...filters, datePosted: alreadySelected ? [] : [opt] });
-};
+    const alreadySelected = filters.datePosted?.[0] === opt;
+    onFilterChange?.({ ...filters, datePosted: alreadySelected ? [] : [opt] });
+  };
 
   const handleReset = () => {
     const resetFilters = {
@@ -323,27 +323,27 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
         />
       </Helmet>
 
-      
 
-    {/* Filter Card */}
-<div className="w-full h-full bg-white dark:bg-gray-800 shadow-2xl sm:shadow-lg rounded-t-2xl sm:rounded-lg sm:h-[1080px] relative filter-scrollbar font-sans flex flex-col overflow-hidden">  {onClose && (
-    <button
-      onClick={onClose}
-      title="Close filters"
-      className="absolute top-4 right-4 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 sm:hidden z-20 text-gray-600 dark:text-gray-400 transition-colors"
-    >
-      <IoMdClose size={28} />
-    </button>
-  )}
 
-  {/* Header */}
-        <div className="flex items-center justify-start gap-2 pt-4 sm:pt-8 px-4 sm:px-8 border-b border-gray-200 dark:border-gray-700 pb-3 bg-white dark:bg-gray-800 dark:text-gray-100 flex-shrink-0 rounded-t-2xl sm:rounded-t-lg">
+      {/* Filter Card */}
+      <div className="w-full h-full bg-white dark:bg-gray-800 shadow-2xl sm:shadow-lg rounded-t-2xl sm:rounded-lg sm:h-[1080px] relative filter-scrollbar font-sans flex flex-col overflow-hidden">  {onClose && (
+        <button
+          onClick={onClose}
+          title="Close filters"
+          className="absolute top-4 right-4 p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 sm:hidden z-20 text-gray-600 dark:text-gray-400 transition-colors"
+        >
+          <IoMdClose size={28} />
+        </button>
+      )}
+
+        {/* Header */}
+        <div className="flex items-center justify-start gap-2 pt-6 sm:pt-4 px-4 sm:px-8 border-b border-gray-200 dark:border-gray-700 pb-3 bg-white dark:bg-gray-800 dark:text-gray-100 flex-shrink-0 rounded-t-2xl sm:rounded-t-lg">
           <FiFilter className="text-xl sm:text-2xl text-blue-500 dark:text-blue-400 flex-shrink-0" />
           <h2 className="text-base sm:text-xl font-semibold text-blue-600 dark:text-blue-400 truncate">Filters</h2>
         </div>
 
         {/* Scrollable Content */}
-<div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-8 py-0 pb-4 pt-6 space-y-6">          {/* Job Title dropdown (location removed from this generic loop) */}
+        <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-8 py-0 pb-4 pt-4 space-y-6">          {/* Job Title dropdown (location removed from this generic loop) */}
           {["jobTitle"].map((category) => (
             <div key={category} className="mb-6">
               <label
@@ -370,14 +370,14 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
           ))}
 
           {/* Location — search bar, picks a location, reveals nearby as checkboxes */}
-          <div className="mb-6 border-b border-blue-300 dark:border-blue-700 pb-6">
+          <div className="mb-4 border-b border-blue-300 dark:border-blue-700 pb-4">
             <label className="block text-gray-700 dark:text-gray-200 text-sm sm:text-base font-semibold tracking-wide mb-2">
               Location
             </label>
 
             <input
               type="text"
-              placeholder="Search a location (e.g. Hyderabad)"
+              placeholder="Search location....."
               value={locationSearch}
               onChange={(e) => setLocationSearch(e.target.value)}
               className="w-full border border-blue-300 dark:border-blue-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm sm:text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-500"
@@ -401,8 +401,8 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
                 {filterOptions.location.filter((loc) =>
                   loc.toLowerCase().includes(locationSearch.trim().toLowerCase())
                 ).length === 0 && (
-                  <div className="px-3 py-2 text-sm text-gray-400">No matches found</div>
-                )}
+                    <div className="px-3 py-2 text-sm text-gray-400">No matches found</div>
+                  )}
               </div>
             )}
 
@@ -456,7 +456,7 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
 
           {/* Checkbox Filters */}
           {["jobType", "workPlace"].map((category) => (
-            <div key={category} className="mb-6 border-b border-blue-300 dark:border-blue-700 pb-8">
+            <div key={category} className="mb-4 border-b border-blue-300 dark:border-blue-700 pb-4">
               <h3 className="font-semibold text-gray-700 dark:text-gray-200 text-sm sm:text-base tracking-wide mb-3">
                 {formatLabel(category)}
               </h3>
@@ -509,10 +509,10 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
 
           {/* Checkbox Filters */}
           {/* Added a blue divider */}
-          {["datePosted"].map((category) => (   
+          {["datePosted"].map((category) => (
             <div
               key={category}
-              className="mb-6 border-b border-blue-300 dark:border-blue-700 pb-6"
+              className="mb-6 border-b border-blue-300 dark:border-blue-700 pb-4"
             >
               <h3 className="font-semibold text-gray-700 dark:text-gray-200 text-sm sm:text-base tracking-wide mb-3">
                 {formatLabel(category)}
@@ -539,7 +539,7 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
           ))}
 
           {/* Fresher Filters */}
-          <div className="mb-6">
+          <div className="mb-6 ">
             <label className="flex items-center gap-3 text-sm sm:text-base cursor-pointer group">
               <input
                 type="checkbox"
@@ -575,19 +575,19 @@ const FilterCard = ({ filters, onFilterChange, onReset, onClose }) => {
                 className="h-4 w-4 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-600 cursor-pointer"
               />
               <span className="text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 font-medium transition-colors">
-                Experience
+              Experience
               </span>
             </label>
           </div>
         </div>
 
         {/* Reset Button - Fixed at bottom on mobile */}
-<div className="flex-shrink-0 flex justify-center gap-2 pt-3 pb-3 px-4 sm:px-8 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg sm:shadow-none">          <button
-            onClick={handleReset}
-            className="w-full sm:w-auto px-6 py-2 rounded-full border border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400 text-sm sm:text-base font-semibold shadow-sm hover:bg-blue-600 hover:text-white dark:hover:bg-blue-700 dark:hover:text-white transition"
-          >
-            Reset Filters
-          </button>
+        <div className="flex-shrink-0 flex justify-center gap-2 pt-3 pb-3 px-4 sm:px-8 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg sm:shadow-none">          <button
+          onClick={handleReset}
+          className="w-full sm:w-auto px-6 py-2 rounded-full border border-blue-500 dark:border-blue-600 text-blue-600 dark:text-blue-400 text-sm sm:text-base font-semibold shadow-sm hover:bg-blue-600 hover:text-white dark:hover:bg-blue-700 dark:hover:text-white transition"
+        >
+          Reset Filters
+        </button>
         </div>
       </div>
     </>

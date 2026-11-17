@@ -70,9 +70,9 @@ const RecruiterList = () => {
     const emails = emailTarget
       ? [emailTarget]
       : filteredRecruiters
-          .filter((r) => selectedIds.has(r._id))
-          .map((r) => r.emailId?.email)
-          .filter(Boolean);
+        .filter((r) => selectedIds.has(r._id))
+        .map((r) => r.emailId?.email)
+        .filter(Boolean);
 
     if (emails.length === 0) return toast.error("No valid email addresses found.");
 
@@ -194,148 +194,157 @@ const RecruiterList = () => {
             </select>
           </div>
           <div className="overflow-x-auto shadow-md rounded-lg">
-          <table className="min-w-full rounded-lg border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700">
-            <thead className="text-center">
-              <tr>
-                <th className="py-3 px-3 bg-gray-200 dark:bg-gray-700"></th>
-                <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                  Full Name
-                </th>
-                <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                  Email
-                </th>
-                <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                  Phone
-                </th>
-                <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                  Position
-                </th>
-                {isAdmin && (
-                  <>
-                    <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                      Active
-                    </th>
-                    <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                      Actions
-                    </th>
-                  </>
-                )}
-              </tr>
-            </thead>
-
-            <tbody className="text-center">
-              {filteredRecruiters.length !== 0 ? (
-                filteredRecruiters.map((recruiter) => (
-                  <tr
-                    key={recruiter?._id}
-                    className="border-b cursor-pointer border-gray-200 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700"
-                    onClick={() =>
-                      navigate(
-                        `/recruiter/dashboard/recruiter-details/${recruiter?._id}`
-                      )
-                    }
-                  >
-                    <td className="py-3 px-3" onClick={(e) => e.stopPropagation()}>
-                      <input
-                        type="checkbox"
-                        checked={selectedIds.has(recruiter._id)}
-                        onChange={() => toggleSelect(recruiter._id)}
-                        className="cursor-pointer accent-blue-600"
-                      />
-                    </td>
-                    <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter?.fullname || " "}</td>
-                    <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter.emailId.email}</td>
-                    <td className="py-3 px-6 text-gray-800 dark:text-gray-100">
-                      {recruiter.phoneNumber?.number || "N/A"}
-                      {recruiter.phoneInvalid && (
-                        <span className="ml-2 inline-flex items-center rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-red-700 dark:bg-red-900/40 dark:text-red-300">
-                          Invalid
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter.position}</td>
-                    {isAdmin && (
-                      <>
-                        {recruiter?.emailId.email === company?.adminEmail ? (
-                          <>
-                            <td className="py-3 px-6 text-gray-800 dark:text-gray-100">-----</td>
-                            <td className="py-3 px-6 text-gray-800 dark:text-gray-100">-----</td>
-                          </>
-                        ) : (
-                          <>
-                            <td className="flex justify-center py-3 px-6 text-gray-800 dark:text-gray-100">
-                              {loading[recruiter._id] ? (
-                                "loading..."
-                              ) : recruiter.isActive ? (
-                                <FaToggleOn
-                                  className="text-green-500 dark:text-green-400 cursor-pointer"
-                                  onClick={(event) =>
-                                    toggleActive(
-                                      event,
-                                      recruiter._id,
-                                      !recruiter.isActive
-                                    )
-                                  }
-                                  size={30}
-                                />
-                              ) : (
-                                <FaToggleOff
-                                  className="text-red-500 dark:text-red-400 cursor-pointer"
-                                  onClick={(event) =>
-                                    toggleActive(
-                                      event,
-                                      recruiter._id,
-                                      !recruiter.isActive
-                                    )
-                                  }
-                                  size={30}
-                                />
-                              )}
-                            </td>
-
-                            <td className="py-3 px-6 text-gray-800 dark:text-gray-100">
-                              {loading[recruiter._id] ? (
-                                "loading..."
-                              ) : (
-                                <div className="flex items-center justify-center gap-3">
-                                  <button
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      openEmailModal(recruiter.emailId?.email);
-                                    }}
-                                    className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
-                                    title="Send Email"
-                                  >
-                                    <FiMail size={18} />
-                                  </button>
-                                  <button
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      setSelectedRecruiter(recruiter);
-                                      setShowDeleteModal(true);
-                                    }}
-                                    className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                                  >
-                                    <FaTrash size={18} />
-                                  </button>
-                                </div>
-                              )}
-                            </td>
-                          </>
-                        )}
-                      </>
-                    )}
-                  </tr>
-                ))
-              ) : (
+            <table className="min-w-full rounded-lg border border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700">
+              <thead className="text-center">
                 <tr>
-                  <td colSpan="7" className="py-3 px-6 text-center text-gray-500 dark:text-gray-400">
-                    No Recruiter Data found
-                  </td>
+                  <th className="py-3 px-3 bg-gray-200 dark:bg-gray-700"></th>
+                  <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                    Full Name
+                  </th>
+                  <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                    Email
+                  </th>
+                  <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                    Phone
+                  </th>
+                  <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                    Position
+                  </th>
+                  {isAdmin && (
+                    <>
+                      <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                        Active
+                      </th>
+                      <th className="py-3 px-6 text-sm font-medium uppercase tracking-wider bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                        Actions
+                      </th>
+                    </>
+                  )}
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody className="text-center">
+                {filteredRecruiters.length !== 0 ? (
+                  filteredRecruiters.map((recruiter) => (
+                    <tr
+                      key={recruiter?._id}
+                      className="border-b cursor-pointer border-gray-200 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-700"
+                      onClick={() =>
+                        navigate(
+                          `/recruiter/dashboard/recruiter-details/${recruiter?._id}`
+                        )
+                      }
+                    >
+                      <td className="py-3 px-3" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.has(recruiter._id)}
+                          onChange={() => toggleSelect(recruiter._id)}
+                          className="cursor-pointer accent-blue-600"
+                        />
+                      </td>
+                      <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter?.fullname || " "}</td>
+                      <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter.emailId.email}</td>
+                      <td className="py-3 px-6 text-gray-800 dark:text-gray-100 whitespace-nowrap">
+                        {(() => {
+                          const rawPhone = recruiter.phoneNumber?.number;
+                          if (!rawPhone) return <span className="text-gray-400 italic">N/A</span>;
+
+                          // Remove spaces, dashes, and non-digits
+                          const digits = String(rawPhone).replace(/\D/g, "");
+
+                          // Check for valid 10-digit Indian mobile number
+                          if (/^[6-9]\d{9}$/.test(digits)) {
+                            return <span>+91&nbsp;{digits.slice(0, 5)}&nbsp;{digits.slice(5)}</span>;
+                          }
+
+                          // If it's invalid, show N/A
+                          return <span className="text-gray-400 italic">N/A</span>;
+                        })()}
+                      </td>
+                      <td className="py-3 px-6 text-gray-800 dark:text-gray-100">{recruiter.position}</td>
+                      {isAdmin && (
+                        <>
+                          {recruiter?.emailId.email === company?.adminEmail ? (
+                            <>
+                              <td className="py-3 px-6 text-gray-800 dark:text-gray-100">-----</td>
+                              <td className="py-3 px-6 text-gray-800 dark:text-gray-100">-----</td>
+                            </>
+                          ) : (
+                            <>
+                              <td className="flex justify-center py-3 px-6 text-gray-800 dark:text-gray-100">
+                                {loading[recruiter._id] ? (
+                                  "loading..."
+                                ) : recruiter.isActive ? (
+                                  <FaToggleOn
+                                    className="text-green-500 dark:text-green-400 cursor-pointer"
+                                    onClick={(event) =>
+                                      toggleActive(
+                                        event,
+                                        recruiter._id,
+                                        !recruiter.isActive
+                                      )
+                                    }
+                                    size={30}
+                                  />
+                                ) : (
+                                  <FaToggleOff
+                                    className="text-red-500 dark:text-red-400 cursor-pointer"
+                                    onClick={(event) =>
+                                      toggleActive(
+                                        event,
+                                        recruiter._id,
+                                        !recruiter.isActive
+                                      )
+                                    }
+                                    size={30}
+                                  />
+                                )}
+                              </td>
+
+                              <td className="py-3 px-6 text-gray-800 dark:text-gray-100">
+                                {loading[recruiter._id] ? (
+                                  "loading..."
+                                ) : (
+                                  <div className="flex items-center justify-center gap-3">
+                                    <button
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        openEmailModal(recruiter.emailId?.email);
+                                      }}
+                                      className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                                      title="Send Email"
+                                    >
+                                      <FiMail size={18} />
+                                    </button>
+                                    <button
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        setSelectedRecruiter(recruiter);
+                                        setShowDeleteModal(true);
+                                      }}
+                                      className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                                    >
+                                      <FaTrash size={18} />
+                                    </button>
+                                  </div>
+                                )}
+                              </td>
+                            </>
+                          )}
+                        </>
+                      )}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="py-3 px-6 text-center text-gray-500 dark:text-gray-400">
+                      No Recruiter Data found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       ) : !company ? (
