@@ -462,12 +462,13 @@ export default function CreatingSuccessfulCV() {
               data, and more — with ATS-friendly resume guidance to help your profile stand out from
               the very first screening.
             </p>
-            <a
-              href="https://greathire.in"
+            <Link
+              to="/jobseeker-login"
+              state={{ from: "/jobs" }}
               className="inline-block bg-white text-slate-800 dark:text-slate-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-slate-100 dark:bg-slate-900/60 transition-colors shadow-lg"
             >
               Build Your Resume with GreatHire →
-            </a>
+            </Link>
           </section>
         </main>
       </div>

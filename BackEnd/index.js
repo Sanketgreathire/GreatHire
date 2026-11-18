@@ -82,6 +82,8 @@ import adminDashboardRoute from "./routes/admin/adminDashboard.route.js";
 import webhookRoute from "./routes/webhook.route.js";
 import jobseekerChatRoute from "./routes/jobseekerChat.route.js";
 import recruiterChatRoute from "./routes/recruiterChat.route.js";
+import blogRoute from "./routes/blog.route.js";
+import blogAdminRoute from "./routes/admin/blogAdmin.route.js";
 
 // ================= MODELS =================
 import Blog from "./models/blog.model.js";
@@ -176,7 +178,9 @@ app.get("/sitemap.xml", async (req, res) => {
   try {
     const baseUrl = "https://www.greathire.in";
     const staticPages = ["/", "/jobs", "/blogs", "/about", "/contact"];
-    const blogs = await Blog.find({ status: "published" }).select("slug updatedAt");
+    // Posts only — kind:"card" tiles are Blog-page sections, not standalone
+    // URLs, so listing them would flood the sitemap with duplicate pages.
+    const blogs = await Blog.find({ status: "published", kind: { $ne: "card" } }).select("slug updatedAt");
 
     res.set("Content-Type", "application/xml");
     let xml = `<?xml version="1.0" encoding="UTF-8"?>`;
@@ -214,6 +218,9 @@ app.use("/api/v1/application", applicationRoute);
 app.use("/api/v1/order", orderRoute);
 app.use("/api/v1/revenue", revenueRoute);
 app.use("/api/v1/contact", contactMessageRoute);
+// Mounted before the generic /api/v1/admin so "blogs" can never be swallowed
+// by a param route inside adminRoute.
+app.use("/api/v1/admin/blogs", blogAdminRoute);
 app.use("/api/v1/admin", adminRoute);
 app.use("/api/v1/admin/stat", adminStatRoute);
 app.use("/api/v1/admin/user/data", adminUserDataRoute);
@@ -257,6 +264,7 @@ app.use("/api/v1/interview", interviewRoute);
 app.use("/api/v1/jobseeker-chat", jobseekerChatRoute);
 app.use("/api/v1/recruiter-chat", recruiterChatRoute);
 app.use("/api/v1/calendar", calendarRoute);
+app.use("/api/v1/blogs", blogRoute);
 
 app.use("/resumes", express.static(path.join(__dirname, "public/resumes")));
 

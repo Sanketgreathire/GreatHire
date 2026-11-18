@@ -17,7 +17,8 @@
     "backdate:applications": "node backdate-applications.js",
     "check:auto-reject": "node check-auto-reject-status.js",
     "test:sheet": "node test-google-sheets.js",
-    "test:calendar": "node test-google-calendar.js"
+    "test:calendar": "node test-google-calendar.js",
+    "seed:blogs": "node scripts/seedBlogs.js"
   },
   "author": "",
   "license": "ISC",

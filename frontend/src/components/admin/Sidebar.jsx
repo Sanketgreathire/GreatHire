@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, memo } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { AiOutlineDashboard, AiOutlineSetting } from "react-icons/ai";
-import { FaUsers, FaBriefcase, FaChartBar, FaUser, FaBars, FaTimes, FaUserFriends } from "react-icons/fa";
+import { FaUsers, FaBriefcase, FaChartBar, FaUser, FaBars, FaTimes, FaUserFriends, FaNewspaper } from "react-icons/fa";
 import { FaUserTie, FaGraduationCap, FaBookOpen, FaRobot, FaHeadset } from "react-icons/fa6";
 import { PiBuildingOfficeDuotone } from "react-icons/pi";
 import { useSelector, useDispatch } from "react-redux";
@@ -24,6 +24,7 @@ const navItems = [
   { name: "Support Queries", path: "/admin/support-queries", icon: FaHeadset },
   { name: "Campus", path: "/admin/campus-dashboard", icon: FaGraduationCap },
   { name: "Courses", path: "/admin/courses", icon: FaBookOpen },
+  { name: "Blogs", path: "/admin/blogs", icon: FaNewspaper },
   { name: "Reports", path: "/admin/reports", icon: FaChartBar },
   { name: "Settings", path: "/admin/settings", icon: AiOutlineSetting },
 ];

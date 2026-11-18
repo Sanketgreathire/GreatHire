@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import { Link } from "react-router-dom";
 
 const blog = {
   title: "Best Ways to Screen Candidates Efficiently",
@@ -442,12 +443,12 @@ export default function CandidateScreeningBlog() {
               data, business, and more — so your team spends time on the right candidates, not the
               wrong ones.
             </p>
-            <a
-              href="https://greathire.in"
+            <Link
+              to="/recruiter-login"
               className="inline-block bg-white text-indigo-700 dark:text-indigo-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-indigo-50 dark:bg-indigo-950/30 transition-colors shadow-lg"
             >
               Start Hiring on GreatHire →
-            </a>
+            </Link>
           </section>
         </main>
       </div>

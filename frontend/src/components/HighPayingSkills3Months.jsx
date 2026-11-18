@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import { Link } from "react-router-dom";
 
 const blog = {
   title: "Top High-Paying Skills You Can Learn in 3 Months",
@@ -413,12 +414,13 @@ export default function HighPayingSkills3Months() {
             <p className="text-emerald-100 mb-8 text-sm sm:text-base max-w-xl mx-auto">
               Explore job openings for professionals with these premium skills on GreatHire. See the actual salary ranges, connect with mentors already earning in these fields, and start your 3-month journey today.
             </p>
-            <a
-              href="https://greathire.in"
+            <Link
+              to="/jobseeker-login"
+              state={{ from: "/jobs" }}
               className="inline-block bg-white text-emerald-700 dark:text-emerald-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-emerald-50 dark:bg-emerald-950/30 transition-colors shadow-lg"
             >
               Explore High-Paying Roles on GreatHire →
-            </a>
+            </Link>
           </section>
         </main>
       </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import { Link } from "react-router-dom";
 
 const blog = {
   title: "Top 20 Common Interview Questions and Best Answers",
@@ -521,12 +522,13 @@ export default function InterviewQuestionsBlog() {
             <p className="text-slate-300 mb-8 text-sm sm:text-base max-w-xl mx-auto">
               GreatHire helps job seekers prepare for interviews, practice with peers, and connect with companies hiring. Get feedback on your interview skills and land the role you want.
             </p>
-            <a
-              href="https://greathire.in"
+            <Link
+              to="/jobseeker-login"
+              state={{ from: "/jobs" }}
               className="inline-block bg-white text-slate-800 dark:text-slate-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-slate-100 dark:bg-slate-900/60 transition-colors shadow-lg"
             >
               Start Preparing on GreatHire →
-            </a>
+            </Link>
           </section>
         </main>
       </div>

@@ -6,9 +6,11 @@ import hiring from "../assets/Human-Resources-Approval-Animation.json";
 import resume from "../assets/Recolored job proposal review animation.json";
 import remoteWork from "../assets/Work from Home.json";
 import { Link, useNavigate } from "react-router-dom"; //npm install react-router-dom
+import { useSelector } from "react-redux";
+import CardRotatingImage from "@/components/CardRotatingImage";
 import ProductDetailPage from "@/components/ProductDetailPage";
 import CareerAdvice from "@/components/CareerAdvice";
-import bannerBlog from "../assets/blogs images/banner.blog.webp";
+import bannerBlog from "../assets/blogs images/banner.blog.jpg";
 
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
@@ -16,9 +18,12 @@ import TheFuture from "@/components/TheFuture";
 
 // imported helmet to apply customized meta tags
 import { Helmet } from "react-helmet-async";
+import API from "@/utils/api";
 
-// Slides data outside component to prevent recreation
-const slides = [
+// Slides data outside component to prevent recreation.
+// STATIC_* arrays are the hardcoded fallbacks: the page renders them unless
+// the matching section comes back non-empty from /api/v1/blogs.
+const STATIC_SLIDES = [
   {
     id: 1,
     title: "The future technology",
@@ -49,9 +54,74 @@ const slides = [
   },
 ];
 
+// Maps a Blog API doc onto the exact shape every section renders, so a card
+// from the DB is a drop-in for its hardcoded counterpart.
+const toCard = (doc) => ({
+  id: doc.cardId ?? doc._id, // detail routes expect the original numeric id
+  title: doc.title,
+  name: doc.title, // interview-tips tiles render `name`
+  subtitle: doc.subtitle || "",
+  description: doc.excerpt || "",
+  image: doc.image,
+  // Rotation list; falls back to the single cover for pre-images documents.
+  images:
+    Array.isArray(doc.images) && doc.images.length
+      ? doc.images
+      : doc.image
+        ? [doc.image]
+        : [],
+  category: doc.category || "",
+  author: doc.author || "GreatHire Team",
+  date:
+    doc.displayDate ||
+    (doc.publishAt
+      ? new Date(doc.publishAt).toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      : ""),
+  link: doc.link || `/blogs/${doc.slug}`,
+  readMore: "Read More", // interview-tips tiles render `readMore`
+});
+
 function Moin_blog_page() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+
+  // Blog cards served by GET /api/v1/blogs (seeded by BackEnd/scripts/seedBlogs.js).
+  // null until the fetch settles; each section falls back to its hardcoded
+  // array when the API is unreachable or the section is empty, so the page
+  // renders exactly as before until/unless content is seeded in the DB.
+  const [dbSections, setDbSections] = useState(null);
+
+  useEffect(() => {
+    let alive = true;
+    API.get("/v1/blogs")
+      .then(({ data }) => {
+        if (!alive || !Array.isArray(data)) return;
+        const grouped = {};
+        data.forEach((doc) => {
+          // Tiles are image-driven; a doc without one would render broken.
+          if (!doc?.section) return;
+          if (!doc.image && !(Array.isArray(doc.images) && doc.images.length)) return;
+          (grouped[doc.section] = grouped[doc.section] || []).push(toCard(doc));
+        });
+        setDbSections(grouped);
+      })
+      .catch(() => {
+        // Backend not deployed yet / offline — keep the hardcoded arrays.
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const pick = (section, fallback) =>
+    dbSections && dbSections[section]?.length ? dbSections[section] : fallback;
+
+  const slides = pick("slides", STATIC_SLIDES);
 
   // Slider navigation functions
   const nextSlide = () => {
@@ -66,14 +136,16 @@ function Moin_blog_page() {
     setCurrentSlide(index);
   };
 
-  // Auto-play functionality for blog slider
+  // Auto-play functionality for blog slider.
+  // slides.length is a dep so the timer restarts cleanly if the section is
+  // swapped for DB-sourced slides of a different length after fetch.
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
 
   // Insight slider functionality
   useEffect(() => {
@@ -109,8 +181,8 @@ function Moin_blog_page() {
     date: "December 24, 2024",
   };
 
-  // Carousel products data
-  const carouselProducts = [
+  // Carousel products data (hardcoded fallback for the "featured" section)
+  const FALLBACK_carouselProducts = [
     {
       title: "Mastering",
       subtitle: "remote work",
@@ -152,7 +224,7 @@ function Moin_blog_page() {
       subtitle: "Of Work",
       description:
         "AI-driven hiring, remote work, and flexible roles are reshaping the workplace, making upskilling crucial. GreatHire.in keeps you informed on trends and connects you to top career opportunities.",
-      image: "./furure_of_work.png",
+      image: "./future_of_work.png",
       date: "December 10, 2024",
       category: "Trending",
     },
@@ -166,6 +238,7 @@ function Moin_blog_page() {
       category: "Trending",
     },
   ];
+  const carouselProducts = pick("featured", FALLBACK_carouselProducts);
 
   const nextCardSlide = () => {
     setCardCurrentSlide((prev) => (prev + 1) % carouselProducts.length);
@@ -181,7 +254,8 @@ function Moin_blog_page() {
     setCardCurrentSlide(index);
   };
 
-  const articles = [
+  // Hardcoded fallback for the "articles" section
+  const FALLBACK_articles = [
     {
       id: 1,
       title: "Advance Your Career in Tech",
@@ -263,8 +337,10 @@ function Moin_blog_page() {
       date: "December 20, 2024",
     },
   ];
+  const articles = pick("articles", FALLBACK_articles);
 
-  const HiringAdvices = [
+  // Hardcoded fallback for the "hiring-advice" section
+  const FALLBACK_HiringAdvices = [
     {
       id: 1,
       title: "Mastering Remote Work",
@@ -330,8 +406,10 @@ function Moin_blog_page() {
       link: "/HiringAdvice/8",
     },
   ];
+  const HiringAdvices = pick("hiring-advice", FALLBACK_HiringAdvices);
 
-  const TrendingTopics = [
+  // Hardcoded fallback for the "trending-topics" section
+  const FALLBACK_TrendingTopics = [
     {
       id: 1,
       title: "The Future of Work",
@@ -414,11 +492,13 @@ function Moin_blog_page() {
       link: "/TrendingTopics/10",
     },
   ];
+  const TrendingTopics = pick("trending-topics", FALLBACK_TrendingTopics);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
-  const carouselItems = [
+  // Hardcoded fallback for the "insights" section
+  const FALLBACK_carouselItems = [
     // {
     //   id: 1,
     //   category: "Recruiter / HR Insights",
@@ -520,6 +600,7 @@ function Moin_blog_page() {
       link: "/CarouselItems/9",
     },
   ];
+  const carouselItems = pick("insights", FALLBACK_carouselItems);
 
   // Auto-play functionality
   useEffect(() => {
@@ -552,7 +633,8 @@ function Moin_blog_page() {
   const [currentPage, setCurrentPage] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
 
-  const productItems = [
+  // Hardcoded fallback for the "interview-tips" section
+  const FALLBACK_productItems = [
     {
       id: 1,
       name: "Effective Job Interview Strategies",
@@ -608,6 +690,7 @@ function Moin_blog_page() {
       image: "./company_insight_03.webp",
     },
   ];
+  const productItems = pick("interview-tips", FALLBACK_productItems);
 
   const itemsPerPage = 3;
   const totalPages = Math.ceil(productItems.length / itemsPerPage);
@@ -678,6 +761,7 @@ function Moin_blog_page() {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: left center;
             z-index: 0;
           }
 
@@ -962,10 +1046,15 @@ function Moin_blog_page() {
             /* Video Banner */
             .video-banner-section {
               min-height: 100vh;
+              min-height: 100dvh;
               padding: 2rem 1rem;
               align-items: flex-end;
               justify-content: center;
               padding-bottom: 3rem;
+            }
+
+            .video-background {
+              object-position: left center;
             }
 
             .content-wrapper {
@@ -2087,7 +2176,7 @@ color: rgb(160, 67, 246);
       {/* Banner Section */}
       <section className="video-banner-section -mt-[117px] pt-[117px] mb-24 dark:bg-gray-900">
         <img
-          className="video-background w-full h-[100px] object-cover"
+          className="video-background w-full h-full object-cover object-left"
           src={bannerBlog}
           alt="GreatHire Banner"
           fetchpriority="high"
@@ -2161,16 +2250,15 @@ color: rgb(160, 67, 246);
 
       {/* ================= BLOG SLIDER SECTION ================= */}
       {/* Slider Section */}
-      <section className="relative w-full h-[100dvh] min-h-[550px] overflow-hidden dark:bg-gray-900">
+      <section className="relative w-full h-screen min-h-[600px] overflow-hidden dark:bg-gray-900">
 
         {/* Background Image */}
         <div className="absolute inset-0">
-          <img
-            src={slides[currentSlide]?.image}
-            alt={slides[currentSlide]?.title}
-            className="w-full h-full object-cover"
-            loading="lazy"
-            decoding="async"
+          <CardRotatingImage
+            images={slides[currentSlide]?.images}
+            image={slides[currentSlide]?.image}
+            alt={slides[currentSlide]?.title || ""}
+            className="w-full h-full"
           />
           {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20 dark:from-black/90 dark:via-black/70 dark:to-black/40"></div>
@@ -2361,10 +2449,12 @@ color: rgb(160, 67, 246);
                     >
                       {/* Image Container */}
                       <div className="relative w-full h-72 sm:h-80 md:h-96 overflow-hidden bg-gradient-to-br from-purple-500 to-pink-500">
-                        <img
-                          src={product.image}
+                        <CardRotatingImage
+                          images={product.images}
+                          image={product.image}
                           alt={product.title}
-                          className="product-image-hover w-full h-full object-cover"
+                          className="w-full h-full"
+                          imgClassName="product-image-hover"
                         />
                         {/* Category Badge */}
                         <span className="absolute top-4 left-4 bg-white/95 text-purple-600 px-4 py-2 rounded-full text-sm font-semibold shadow-md">
@@ -2448,10 +2538,12 @@ color: rgb(160, 67, 246);
               >
                 {/* Article Image */}
                 <div className="article-image-container relative h-64 md:h-56 sm:h-52 bg-gradient-to-br from-gray-800 to-gray-600">
-                  <img
-                    src={article.image}
+                  <CardRotatingImage
+                    images={article.images}
+                    image={article.image}
                     alt={article.title}
-                    className="article-image w-full h-full object-cover"
+                    className="w-full h-full"
+                    imgClassName="article-image"
                   />
                   {/* Category Badge */}
                   <span className="category-badge absolute top-4 left-4 bg-white bg-opacity-95 text-green-600 px-4 py-2 rounded-full text-sm font-semibold shadow-md">
@@ -2535,10 +2627,12 @@ color: rgb(160, 67, 246);
               >
                 {/* Image Section */}
                 <div className="article-image-container relative h-64 md:h-56 sm:h-52 overflow-hidden bg-gray-100 dark:bg-gray-700">
-                  <img
-                    src={article.image}
+                  <CardRotatingImage
+                    images={article.images}
+                    image={article.image}
                     alt={article.title}
-                    className="article-featured-image w-full h-full object-cover"
+                    className="w-full h-full"
+                    imgClassName="article-featured-image"
                   />
                 </div>
 
@@ -2589,10 +2683,12 @@ color: rgb(160, 67, 246);
               >
                 {/* Image Section */}
                 <div className="article-image-container relative h-64 md:h-56 sm:h-52 overflow-hidden bg-gray-100 dark:bg-gray-700">
-                  <img
-                    src={article.image}
+                  <CardRotatingImage
+                    images={article.images}
+                    image={article.image}
                     alt={article.title}
-                    className="article-featured-image w-full h-full object-cover"
+                    className="w-full h-full"
+                    imgClassName="article-featured-image"
                   />
                 </div>
 
@@ -2666,10 +2762,12 @@ color: rgb(160, 67, 246);
                   <div className="lg:col-span-5 xl:col-span-4">
                     <div className="relative h-56 sm:h-64 md:h-72 lg:h-80 xl:h-96 
                               overflow-hidden rounded-xl sm:rounded-2xl">
-                      <img
-                        src={item.image}
+                      <CardRotatingImage
+                        images={item.images}
+                        image={item.image}
                         alt={item.title}
-                        className="w-full h-full object-cover object-center"
+                        className="w-full h-full"
+                        imgClassName="object-center"
                       />
 
                       {/* Better Dark Overlay */}
@@ -2834,10 +2932,11 @@ color: rgb(160, 67, 246);
                             from-gray-200 to-gray-300 
                             dark:from-gray-700 dark:to-gray-800 overflow-hidden">
 
-                    <img
-                      src={product.image}
+                    <CardRotatingImage
+                      images={product.images}
+                      image={product.image}
                       alt={product.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full"
                     />
 
                     {/* Badge */}
@@ -3063,6 +3162,17 @@ color: rgb(160, 67, 246);
 
             <Link
               to="/jobs"
+              onClick={(e) => {
+                // Gate the job list behind jobseeker login. state.from sends
+                // them back to /jobs after signing in — same contract as the
+                // "Login to Apply" button in JobsForYou.
+                if (!user) {
+                  e.preventDefault();
+                  navigate("/jobseeker-login", {
+                    state: { from: "/jobs" },
+                  });
+                }
+              }}
               className="explore-btn inline-flex items-center gap-2"
             >
               Explore all Job Posting

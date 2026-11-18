@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import { Link } from "react-router-dom";
 
 const blog = {
   title: "Best Career Options After Graduation in India",
@@ -469,12 +470,13 @@ export default function CareerOptionsAfterGraduationBlog() {
               Explore thousands of fresher and graduate-friendly roles across IT, data, finance,
               marketing, and more — companies actively hiring right now across India.
             </p>
-            <a
-              href="https://greathire.in"
+            <Link
+              to="/jobseeker-login"
+              state={{ from: "/jobs" }}
               className="inline-block bg-white text-rose-600 dark:text-rose-400 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-rose-50 dark:bg-rose-950/30 transition-colors shadow-lg"
             >
               Explore Graduate Jobs on GreatHire →
-            </a>
+            </Link>
           </section>
         </main>
       </div>

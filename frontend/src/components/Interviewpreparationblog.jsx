@@ -455,12 +455,12 @@ export default function InterviewPreparationBlog() {
               GreatHire connects recruiters with AI-powered tools and professional insights to build
               structured interviews and find the talent best suited for your organization.
             </p>
-            <a
-              href="https://greathire.in"
+            <Link
+              to="/recruiter-login"
               className="inline-block bg-white text-indigo-800 dark:text-indigo-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-indigo-50 dark:bg-indigo-950/30 transition-colors shadow-lg"
             >
               Start Hiring Smarter on GreatHire →
-            </a>
+            </Link>
           </section>
         </main>
       </div>

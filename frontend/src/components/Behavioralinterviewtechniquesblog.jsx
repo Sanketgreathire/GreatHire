@@ -454,12 +454,12 @@ export default function BehavioralInterviewTechniquesBlog() {
               GreatHire.in helps recruiters structure behavioral interviews, standardize evaluation,
               and connect with candidates who are both skilled and a genuine fit for the team.
             </p>
-            <a
-              href="https://greathire.in"
+            <Link
+              to="/recruiter-login"
               className="inline-block bg-white text-teal-800 dark:text-teal-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-teal-50 dark:bg-teal-950/30 transition-colors shadow-lg"
             >
               Start Hiring Smarter on GreatHire →
-            </a>
+            </Link>
           </section>
         </main>
       </div>

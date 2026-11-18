@@ -404,12 +404,13 @@ export default function ATSOptimizationBlog() {
               GreatHire.in offers ATS-friendly resume guidance and connects your optimized profile
               with recruiters actively hiring in your field — so your qualifications actually get seen.
             </p>
-            <a
-              href="https://greathire.in"
+            <Link
+              to="/jobseeker-login"
+              state={{ from: "/jobs" }}
               className="inline-block bg-white text-rose-700 dark:text-rose-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-rose-50 dark:bg-rose-950/30 transition-colors shadow-lg"
             >
               Optimize Your Resume on GreatHire →
-            </a>
+            </Link>
           </section>
         </main>
       </div>

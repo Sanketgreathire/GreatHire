@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import { Link } from "react-router-dom";
 
 const blog = {
   title: "IT vs Non-IT Jobs for Freshers",
@@ -399,12 +400,13 @@ export default function ITvsNonITJobs() {
             <p className="text-amber-100 mb-8 text-sm sm:text-base max-w-xl mx-auto">
               Whether IT or Non-IT, GreatHire has opportunities across both sectors. Explore roles, talk to professionals, and make an informed decision for your career.
             </p>
-            <a
-              href="https://greathire.in"
+            <Link
+              to="/jobseeker-login"
+              state={{ from: "/jobs" }}
               className="inline-block bg-white text-amber-700 dark:text-amber-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-amber-50 dark:bg-amber-950/30 transition-colors shadow-lg"
             >
               Explore Both IT & Non-IT Roles on GreatHire →
-            </a>
+            </Link>
           </section>
         </main>
       </div>

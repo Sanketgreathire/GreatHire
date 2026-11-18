@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import { Link } from "react-router-dom";
 
 const blog = {
   title: "How to Switch Career to IT Without Coding Background",
@@ -381,12 +382,13 @@ export default function SwitchToITNoCoding() {
             <p className="text-cyan-100 mb-8 text-sm sm:text-base max-w-xl mx-auto">
               Explore IT roles perfect for professionals with non-tech backgrounds. Connect with mentors who made similar transitions. Find opportunities in your domain-adjacent IT roles on GreatHire.
             </p>
-            <a
-              href="https://greathire.in"
+            <Link
+              to="/jobseeker-login"
+              state={{ from: "/jobs" }}
               className="inline-block bg-white text-cyan-700 dark:text-cyan-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-cyan-50 dark:bg-cyan-950/30 transition-colors shadow-lg"
             >
               Explore Non-Coding IT Roles on GreatHire →
-            </a>
+            </Link>
           </section>
         </main>
       </div>

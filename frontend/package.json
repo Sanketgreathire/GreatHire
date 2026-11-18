@@ -71,6 +71,7 @@
     "recharts": "^2.15.1",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
+    "remark-gfm": "^4.0.1",
     "socket.io-client": "^4.8.1",
     "sonner": "^1.7.4",
     "styled-components": "^6.1.19",

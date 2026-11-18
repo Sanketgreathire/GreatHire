@@ -456,12 +456,12 @@ export default function CulturalFitAssessmentBlog() {
               GreatHire.in helps recruiters structure values-based assessments and connect with
               candidates who align with their organization's culture and long-term vision.
             </p>
-            <a
-              href="https://greathire.in"
+            <Link
+              to="/recruiter-login"
               className="inline-block bg-white text-violet-800 dark:text-violet-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-violet-50 dark:bg-violet-950/30 transition-colors shadow-lg"
             >
               Start Hiring Smarter on GreatHire →
-            </a>
+            </Link>
           </section>
         </main>
       </div>

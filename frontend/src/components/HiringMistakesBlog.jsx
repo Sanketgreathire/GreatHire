@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import { Link } from "react-router-dom";
 
 const blog = {
   title: "Top Hiring Mistakes Companies Make",
@@ -442,12 +443,12 @@ export default function HiringMistakesBlog() {
               IT, business, data, and more — so you spend less time on bad fits and more time on great
               hires.
             </p>
-            <a
-              href="https://greathire.in"
+            <Link
+              to="/recruiter-login"
               className="inline-block bg-white text-slate-800 dark:text-slate-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-slate-100 dark:bg-slate-900/60 transition-colors shadow-lg"
             >
               Start Hiring Smarter on GreatHire →
-            </a>
+            </Link>
           </section>
         </main>
       </div>

@@ -388,12 +388,12 @@ export default function HireRightCandidateFaster() {
             <p className="text-rose-100 mb-8 text-sm sm:text-base max-w-xl mx-auto">
               Access top-quality pre-screened candidates, job board listings, and recruitment tools on GreatHire. Build your hiring system, reduce time-to-hire, and land quality talent.
             </p>
-            <a
-              href="https://greathire.in"
+            <Link
+              to="/recruiter-login"
               className="inline-block bg-white text-rose-700 dark:text-rose-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-rose-50 dark:bg-rose-950/30 transition-colors shadow-lg"
             >
               Post Jobs & Find Talent on GreatHire →
-            </a>
+            </Link>
           </section>
         </main>
       </div>

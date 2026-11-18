@@ -75,3 +75,29 @@ export const multiUpload = multer({
 }).fields([
   { name: "screenshots", maxCount: 3 },
 ]);
+
+// Blog card image upload (admin CMS). Field name "image"; accepts the same
+// image types as profile photos. Cloudinary upload happens in the controller.
+const blogImageFilter = (req, file, cb) => {
+  if (ALLOWED_IMAGE_TYPES.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(
+      new Error("Invalid file type! Only .jpg, .jpeg, .png and .webp are allowed."),
+      false
+    );
+  }
+};
+
+export const blogImageUpload = multer({
+  storage,
+  limits: { fileSize: MAX_FILE_SIZE },
+  fileFilter: blogImageFilter,
+}).single("image");
+
+// Multi-image variant for card rotation (field: "images", up to 8 files).
+export const blogImagesUpload = multer({
+  storage,
+  limits: { fileSize: MAX_FILE_SIZE, files: 8 },
+  fileFilter: blogImageFilter,
+}).array("images", 8);

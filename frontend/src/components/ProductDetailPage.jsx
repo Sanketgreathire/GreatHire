@@ -1,6 +1,6 @@
 // ProductDetailPage.jsx
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
 import { Helmet } from "react-helmet-async";
@@ -886,13 +886,14 @@ const ProductDetailPage = () => {
 
                 <h3 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 relative z-10">{p.cta.title}</h3>
                 <p className="text-green-100 mb-7 max-w-lg mx-auto text-[15px] leading-relaxed relative z-10">{p.cta.body}</p>
-                <a
-                  href="/"
+                <Link
+                  to="/jobseeker-login"
+                  state={{ from: "/jobs" }}
                   className="inline-block px-8 py-3 rounded-xl font-bold text-white shadow-lg hover:opacity-90 active:scale-95 transition-all duration-150 relative z-10"
                   style={{ backgroundColor: "#f97316" }}
                 >
                   {p.cta.button}
-                </a>
+                </Link>
               </div>
             </div>
           </section>

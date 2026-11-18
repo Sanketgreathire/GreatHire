@@ -67,6 +67,7 @@ const OurService = lazy(() => import("./pages/services/OurService"));
 const MainBlogPage = lazy(() => import("./components/Main_blog_page"));
 const BlogsPage = lazy(() => import("./pages/services/Blogs"));
 const BlogDetail = lazy(() => import("./pages/services/BlogDetail"));
+const BlogPostDetail = lazy(() => import("./pages/services/BlogPostDetail"));
 const PrivacyPolicy = lazy(() => import("./pages/policies/PrivacyPolicy"));
 const RefundAndReturnPolicy = lazy(() => import("./pages/policies/RefundAndReturnPolicy"));
 const TermsAndConditions = lazy(() => import("./pages/policies/TermsAndConditions"));
@@ -186,7 +187,7 @@ const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
   { path: "/Main_blog_page", element: <MainBlogPage /> },
   { path: "/blogs", element: <BlogsPage /> },
-  { path: "/blogs/:slug", element: <MainBlogPage /> },  // or BlogsPage — whichever is intended
+  { path: "/blogs/:slug", element: <BlogPostDetail /> },  // DB-driven article (GET /api/v1/blogs/:slug)
   { path: "/blog/:id", element: <BlogDetail /> },
   { path: "/about", element: <About /> },
   { path: "/auth", element: <AuthPage /> },

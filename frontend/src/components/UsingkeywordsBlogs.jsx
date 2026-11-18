@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
+import { Link } from "react-router-dom";
 
 const blog = {
   title: "Using Keywords",
@@ -386,12 +387,13 @@ export default function UsingKeywordsBlog() {
               GreatHire.in helps you identify the right keywords for your target roles and connects
               your optimized profile with recruiters actively hiring in your field.
             </p>
-            <a
-              href="https://greathire.in"
+            <Link
+              to="/jobseeker-login"
+              state={{ from: "/jobs" }}
               className="inline-block bg-white text-amber-700 dark:text-amber-300 font-bold text-sm sm:text-base px-8 py-3 rounded-full hover:bg-amber-50 dark:bg-amber-950/30 transition-colors shadow-lg"
             >
               Optimize Your Resume on GreatHire →
-            </a>
+            </Link>
           </section>
         </main>
       </div>
