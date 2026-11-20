@@ -916,10 +916,7 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
                               formik.setFieldTouched("urgentHiring", true, true);
                             }}
                             onBlur={formik.handleBlur}
-                            className={`${inputCls} cursor-pointer
-                           [&>option]:bg-white [&>option]:text-slate-900
-                            hover:bg-green-700 hover:text-white hover:border-green-700
-                            focus:bg-green-700 focus:text-white focus:border-green-700 focus:ring-green-700/40`}
+                            className={`${inputCls} cursor-pointer`}
                           >
                             <option value="">Select</option>
                             <option value="Yes">Yes</option>
@@ -941,7 +938,7 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
                               name="title"
                               type="text"
                               placeholder="Search or enter job title"
-                              className={`${inputCls} hover:bg-green-700 hover:text-white hover:placeholder-white focus:bg-green-700 focus:text-white focus:placeholder-white focus:border-green-700 focus:ring-green-700/40`}
+                              className={inputCls}
                               onChange={formik.handleChange}
                               value={formik.values.title}
                               onFocus={(e) => e.target.nextSibling.classList.remove("hidden")}
@@ -1406,7 +1403,7 @@ const PostJob = ({ adminMode = false, adminCompany = null, onSuccess = null }) =
                             type="text"
                             id="location"
                             name="location"
-                            className={`${inputCls} hover:bg-green-700 hover:text-white hover:placeholder-white focus:bg-green-700 focus:text-white focus:placeholder-white focus:border-green-700 focus:ring-green-700/40`}
+                            className={inputCls}
                             placeholder="Enter location manually or select from dropdown"
                             value={locationSearch || formik.values.location}
                             onChange={(e) => {

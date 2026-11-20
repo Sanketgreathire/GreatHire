@@ -17,11 +17,10 @@ import { APPLICATION_API_END_POINT, COMPANY_API_END_POINT, VERIFICATION_API_END_
 function Tag({ children, primary }) {
   return (
     <span
-      className={`inline-block text-xs px-3 py-1 rounded-full font-medium border ${
-        primary
+      className={`inline-block text-xs px-3 py-1 rounded-full font-medium border ${primary
           ? "bg-blue-600 text-white border-blue-600"
           : "bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-600"
-      }`}
+        }`}
     >
       {children}
     </span>
@@ -144,12 +143,12 @@ const ApplicantDetails = ({
   // Merge fresh applicant profile with application data
   const mergedApp = freshApplicant
     ? {
-        ...app,
-        applicant: {
-          ...app?.applicant,
-          ...freshApplicant,
-        },
-      }
+      ...app,
+      applicant: {
+        ...app?.applicant,
+        ...freshApplicant,
+      },
+    }
     : app;
 
   // Deduct credit if required
@@ -222,10 +221,10 @@ const ApplicantDetails = ({
         prev.map((item) =>
           item._id === app._id
             ? {
-                ...item,
-                matchScore: score,
-                screeningStatus: resultStatus,
-              }
+              ...item,
+              matchScore: score,
+              screeningStatus: resultStatus,
+            }
             : item
         )
       );
@@ -242,12 +241,12 @@ const ApplicantDetails = ({
 
   // Screening must be passed before interview can start
   // const screeningPassed = normalizeStatus(screeningStatus) === "passed";
-const screeningCompleted = ["passed", "pending"].includes(
-  normalizeStatus(screeningStatus)
-);
+  // const screeningCompleted = ["passed", "pending"].includes(
+  //   normalizeStatus(screeningStatus)
+  // );
+  const screeningCompleted = normalizeStatus(screeningStatus) === "passed";
 
 
-  
 
   // Interview completion must come from backend/provider status
   const interviewCompleted = [
@@ -258,15 +257,18 @@ const screeningCompleted = ["passed", "pending"].includes(
   ].includes(normalizeStatus(interviewStatus));
 
   // Final decision is enabled only after screening, completed interview and saved logs
-const canMakeDecision =
-  screeningCompleted && interviewCompleted && logsSaved === true;
+  const canMakeDecision =
+    screeningCompleted && interviewCompleted && logsSaved === true;
+
+  const canReject =
+    decisionStatus !== "Shortlisted" && decisionStatus !== "Rejected";
 
   // STEP 2: Preview interview questions
   const previewInterviewQuestions = async () => {
-   if (!screeningCompleted) {
-  toast.error("Complete resume screening first.");
-  return;
-}
+    if (!screeningCompleted) {
+      toast.error("Complete resume screening first.");
+      return;
+    }
 
     if (interviewQuestions) {
       setShowPreviewModal(true);
@@ -293,7 +295,7 @@ const canMakeDecision =
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-          "Error loading interview questions"
+        "Error loading interview questions"
       );
     } finally {
       setIsPreviewLoading(false);
@@ -307,10 +309,10 @@ const canMakeDecision =
       return;
     }
 
-  if (!screeningCompleted) {
-  toast.error("Complete AI resume screening first.");
-  return;
-}
+    if (!screeningCompleted) {
+      toast.error("Complete AI resume screening first.");
+      return;
+    }
 
     const currentInterviewStatus = normalizeStatus(interviewStatus);
 
@@ -354,35 +356,34 @@ const canMakeDecision =
         prev.map((item) =>
           item._id === app._id
             ? {
-                ...item,
-                aiInterview: {
-                  ...(item.aiInterview || {}),
-                  ...(res.data.aiInterview || {}),
-                  status: newInterviewStatus,
-                },
-              }
+              ...item,
+              aiInterview: {
+                ...(item.aiInterview || {}),
+                ...(res.data.aiInterview || {}),
+                status: newInterviewStatus,
+              },
+            }
             : item
         )
       );
 
       toast.success(
-        `AI Interview initiated. Call ID: ${
-          res.data.call?.call_id || "Created"
+        `AI Interview initiated. Call ID: ${res.data.call?.call_id || "Created"
         }`
       );
-   } catch (error) {
-  console.log("========== AI INTERVIEW ERROR ==========");
-  console.log("Status:", error?.response?.status);
-  console.log("Response Data:", error?.response?.data);
-  console.log("Error Message:", error?.message);
-  console.log("========================================");
+    } catch (error) {
+      console.log("========== AI INTERVIEW ERROR ==========");
+      console.log("Status:", error?.response?.status);
+      console.log("Response Data:", error?.response?.data);
+      console.log("Error Message:", error?.message);
+      console.log("========================================");
 
-  toast.error(
-    error?.response?.data?.message ||
-      error?.response?.data?.error ||
-      "Error starting AI interview"
-  );
-} finally {
+      toast.error(
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        "Error starting AI interview"
+      );
+    } finally {
       setIsStartLoading(false);
     }
   };
@@ -440,16 +441,16 @@ const canMakeDecision =
         prev.map((item) =>
           item._id === app._id
             ? {
-                ...item,
-                aiInterview: {
-                  ...(item.aiInterview || {}),
-                  ...(res.data.aiInterview || {}),
-                  status: latestStatus,
-                  transcript,
-                  recording,
-                  logsSaved: Boolean(saved),
-                },
-              }
+              ...item,
+              aiInterview: {
+                ...(item.aiInterview || {}),
+                ...(res.data.aiInterview || {}),
+                status: latestStatus,
+                transcript,
+                recording,
+                logsSaved: Boolean(saved),
+              },
+            }
             : item
         )
       );
@@ -474,6 +475,18 @@ const canMakeDecision =
   const handleFinalDecision = async (decision) => {
     if (!applicantId) {
       toast.error("Invalid applicant ID");
+      return;
+    }
+
+    if (decision === "Shortlisted" ? !canMakeDecision : !canReject) {
+      toast.error(
+        "Complete screening, interview and save interview logs before shortlisting."
+      );
+      return;
+    }
+
+    if (decisionStatus === "Shortlisted" || decisionStatus === "Rejected") {
+      toast.error("A final decision has already been made.");
       return;
     }
 
@@ -502,9 +515,9 @@ const canMakeDecision =
         prev.map((item) =>
           item._id === app._id
             ? {
-                ...item,
-                status: updatedStatus,
-              }
+              ...item,
+              status: updatedStatus,
+            }
             : item
         )
       );
@@ -531,7 +544,7 @@ const canMakeDecision =
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-          "Could not update applicant status"
+        "Could not update applicant status"
       );
     } finally {
       setDecisionLoading("");
@@ -606,9 +619,8 @@ const canMakeDecision =
                 )}
 
                 <span
-                  className={`text-xs font-semibold px-3 py-1 rounded-full ${
-                    STATUS_STYLES[status] || STATUS_STYLES.Pending
-                  }`}
+                  className={`text-xs font-semibold px-3 py-1 rounded-full ${STATUS_STYLES[status] || STATUS_STYLES.Pending
+                    }`}
                 >
                   {status}
                 </span>
@@ -881,93 +893,93 @@ const canMakeDecision =
                 const isAllowed = ["pdf", "doc", "docx"].includes(ext);
 
                 const openResumeInTab = async () => {
-  if (ext === "pdf") {
-    const tab = window.open("", "_blank");
-    try {
-      const res = await fetch(p.resume);
-      const blob = await res.blob();
-      const url = URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
-      if (tab) tab.location.href = url;
-    } catch {
-      if (tab) tab.location.href = p.resume;
-    }
-  } else {
-    // Chrome can't display Word files, so use Google's viewer
-    window.open(
-      `https://docs.google.com/viewer?url=${encodeURIComponent(p.resume)}&embedded=false`,
-      "_blank"
-    );
-  }
-};
+                  if (ext === "pdf") {
+                    const tab = window.open("", "_blank");
+                    try {
+                      const res = await fetch(p.resume);
+                      const blob = await res.blob();
+                      const url = URL.createObjectURL(new Blob([blob], { type: "application/pdf" }));
+                      if (tab) tab.location.href = url;
+                    } catch {
+                      if (tab) tab.location.href = p.resume;
+                    }
+                  } else {
+                    // Chrome can't display Word files, so use Google's viewer
+                    window.open(
+                      `https://docs.google.com/viewer?url=${encodeURIComponent(p.resume)}&embedded=false`,
+                      "_blank"
+                    );
+                  }
+                };
 
-const downloadResumeFile = async () => {
-  try {
-    const res = await fetch(p.resume);
-    const blob = await res.blob();
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = resumeName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(a.href);
-  } catch {
-    window.open(p.resume.replace("/upload/", "/upload/fl_attachment/"), "_blank");
-  }
-};
+                const downloadResumeFile = async () => {
+                  try {
+                    const res = await fetch(p.resume);
+                    const blob = await res.blob();
+                    const a = document.createElement("a");
+                    a.href = URL.createObjectURL(blob);
+                    a.download = resumeName;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(a.href);
+                  } catch {
+                    window.open(p.resume.replace("/upload/", "/upload/fl_attachment/"), "_blank");
+                  }
+                };
 
                 return (
-  <>
-    <Divider />
-    <div className="flex items-center justify-between">
-      <SectionTitle>Resume</SectionTitle>
-      <span className="text-[11px] text-gray-500 dark:text-gray-400 font-medium bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">
-        Accepted: PDF, DOC, DOCX
-      </span>
-    </div>
+                  <>
+                    <Divider />
+                    <div className="flex items-center justify-between">
+                      <SectionTitle>Resume</SectionTitle>
+                      <span className="text-[11px] text-gray-500 dark:text-gray-400 font-medium bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">
+                        Accepted: PDF, DOC, DOCX
+                      </span>
+                    </div>
 
-    <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-      <div className="flex items-center gap-3 min-w-0">
-        <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
-          <FiFileText size={16} className="text-white" />
-        </div>
+                    <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
+                          <FiFileText size={16} className="text-white" />
+                        </div>
 
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-blue-700 dark:text-blue-400 truncate">
-            {resumeName}
-          </p>
-        </div>
-      </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-blue-700 dark:text-blue-400 truncate">
+                            {resumeName}
+                          </p>
+                        </div>
+                      </div>
 
-      {isAllowed ? (
-        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 shrink-0 ml-2">
-          {ext || "PDF"}
-        </span>
-      ) : (
-        <span className="text-[10px] font-semibold px-2 py-1 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 shrink-0 ml-2">
-          Non-standard format
-        </span>
-      )}
-    </div>
+                      {isAllowed ? (
+                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 shrink-0 ml-2">
+                          {ext || "PDF"}
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-semibold px-2 py-1 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 shrink-0 ml-2">
+                          Non-standard format
+                        </span>
+                      )}
+                    </div>
 
-    <div className="flex gap-2 mt-2">
-      <button
-        type="button"
-        onClick={openResumeInTab}
-        className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition"
-      >
-        Open in new tab
-      </button>
-      <button
-        type="button"
-        onClick={downloadResumeFile}
-        className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg text-sm font-semibold transition"
-      >
-        Download
-      </button>
-    </div>
-  </>
-);
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        type="button"
+                        onClick={openResumeInTab}
+                        className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition"
+                      >
+                        Open in new tab
+                      </button>
+                      <button
+                        type="button"
+                        onClick={downloadResumeFile}
+                        className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg text-sm font-semibold transition"
+                      >
+                        Download
+                      </button>
+                    </div>
+                  </>
+                );
               })()}
 
               {/* Employer Q&A */}
@@ -1006,7 +1018,7 @@ const downloadResumeFile = async () => {
                         Screening Score
                       </span>
                       <span className="text-xs text-gray-500 dark:text-gray-400">
-                        Result: {screeningStatus || "Processing"}
+                       Result: {screeningStatus || "Processing"} (pass mark 75%)
                       </span>
                     </div>
 
@@ -1034,7 +1046,7 @@ const downloadResumeFile = async () => {
                   </div>
 
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                    Interview logs: {logsSaved ? "Saved" : "Not confirmed saved"}
+                    Interview logs: {logsSaved ? "Saved" : "No logs saved yet"}
                   </p>
                 </>
               )}
@@ -1054,7 +1066,7 @@ const downloadResumeFile = async () => {
                       <span>1. Resume Screening</span>
                       <span
                         className={
-                         screeningCompleted
+                          screeningCompleted
                             ? "text-green-600 font-semibold"
                             : "text-gray-500"
                         }
@@ -1109,7 +1121,7 @@ const downloadResumeFile = async () => {
 
                     <button
                       onClick={previewInterviewQuestions}
-                     disabled={!screeningCompleted || isPreviewLoading}
+                      disabled={!screeningCompleted || isPreviewLoading}
                       className="flex-1 py-2.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"
                     >
                       {isPreviewLoading ? "Loading..." : "👁️ Preview"}
@@ -1118,7 +1130,7 @@ const downloadResumeFile = async () => {
                     <button
                       onClick={startAIInterview}
                       disabled={
-                        !screeningCompleted||
+                        !screeningCompleted ||
                         isStartLoading ||
                         ["scheduled", "in progress", "connected", "completed"].includes(
                           normalizeStatus(interviewStatus)
@@ -1129,18 +1141,19 @@ const downloadResumeFile = async () => {
                       {isStartLoading
                         ? "Connecting..."
                         : normalizeStatus(interviewStatus) === "scheduled"
-                        ? "📞 Call Scheduled"
-                        : normalizeStatus(interviewStatus) === "in progress"
-                        ? "📞 Call In Progress"
-                        : interviewCompleted
-                        ? "✓ Interview Completed"
-                        : "📞 AI Call"}
+                          ? "📞 Call Scheduled"
+                          : normalizeStatus(interviewStatus) === "in progress"
+                            ? "📞 Call In Progress"
+                            : interviewCompleted
+                              ? "✓ Interview Completed"
+                              : "📞 AI Call"}
                     </button>
 
                     <button
                       onClick={fetchCallLogs}
                       disabled={
                         !interviewStatus ||
+                        normalizeStatus(interviewStatus) === "not started" ||
                         callLogsLoading ||
                         decisionStatus === "Shortlisted" ||
                         decisionStatus === "Rejected"
@@ -1155,11 +1168,10 @@ const downloadResumeFile = async () => {
                   <div className="space-y-2">
                     <div className="flex gap-3">
                       <button
-                        className={`flex-1 py-3 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50 ${
-                          decisionStatus === "Shortlisted"
+                        className={`flex-1 py-3 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50 ${decisionStatus === "Shortlisted"
                             ? "bg-green-600 ring-2 ring-green-300"
                             : "bg-green-500 hover:bg-green-600"
-                        }`}
+                          }`}
                         disabled={
                           decisionLoading !== ""
                         }
@@ -1168,26 +1180,28 @@ const downloadResumeFile = async () => {
                         {decisionLoading === "Shortlisted"
                           ? "Shortlisting..."
                           : decisionStatus === "Shortlisted"
-                          ? "✓ Shortlisted"
-                          : "✅ Shortlist"}
+                            ? "✓ Shortlisted"
+                            : "✅ Shortlist"}
                       </button>
 
                       <button
-                        className={`flex-1 py-3 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50 ${
-                          decisionStatus === "Rejected"
+                        className={`flex-1 py-3 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50 ${decisionStatus === "Rejected"
                             ? "bg-red-600 ring-2 ring-red-300"
                             : "bg-red-500 hover:bg-red-600"
-                        }`}
+                          }`}
                         disabled={
-                          decisionLoading !== ""
+                          !canMakeDecision ||
+                          decisionLoading !== "" ||
+                          decisionStatus === "Shortlisted" ||
+                          decisionStatus === "Rejected"
                         }
                         onClick={() => handleFinalDecision("Rejected")}
                       >
                         {decisionLoading === "Rejected"
                           ? "Rejecting..."
                           : decisionStatus === "Rejected"
-                          ? "✕ Rejected"
-                          : "❌ Reject"}
+                            ? "✕ Rejected"
+                            : "❌ Reject"}
                       </button>
                     </div>
                   </div>
@@ -1248,8 +1262,8 @@ const downloadResumeFile = async () => {
 
                     <div className="flex-1 overflow-y-auto mb-4">
                       {callTranscript.trim() &&
-                      !callTranscript.toLowerCase().includes("not yet available") &&
-                      !callTranscript.toLowerCase().includes("being processed") ? (
+                        !callTranscript.toLowerCase().includes("not yet available") &&
+                        !callTranscript.toLowerCase().includes("being processed") ? (
                         <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 p-5 rounded-lg border border-gray-200 dark:border-gray-600">
                           <div className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed font-mono whitespace-pre-wrap break-words">
                             {callTranscript}

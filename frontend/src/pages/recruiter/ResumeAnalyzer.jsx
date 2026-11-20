@@ -5,29 +5,30 @@ import axios from "axios";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { FiCpu, FiUsers, FiRefreshCw, FiUpload, FiX } from "react-icons/fi";
 import { JOB_API_END_POINT, APPLICATION_API_END_POINT } from "@/utils/ApiEndPoint";
+import { toSkillArray } from "@/utils/skills";
 
 // ── Local AI Engine ──────────────────────────────────────────
 const ROLE_KW = {
-  default:   ["communication","teamwork","leadership","management","analytical","project","collaboration","organized"],
-  frontend:  ["react","vue","angular","javascript","typescript","html","css","tailwind","redux","responsive","ui","ux","figma","next.js","rest api"],
-  backend:   ["node","express","python","django","java","spring","sql","mongodb","postgresql","redis","api","rest","graphql","microservices","docker","aws"],
-  fullstack: ["react","node","javascript","typescript","mongodb","sql","rest api","docker","git","html","css","express","redux","aws","ci/cd"],
-  data:      ["python","sql","machine learning","pandas","numpy","tensorflow","statistics","visualization","tableau","power bi","excel","spark","etl","scikit"],
-  devops:    ["docker","kubernetes","ci/cd","jenkins","aws","azure","terraform","ansible","linux","bash","monitoring","prometheus","git","pipeline"],
-  design:    ["figma","sketch","adobe xd","photoshop","ui","ux","wireframe","prototype","user research","typography","responsive","accessibility","design system"],
-  marketing: ["seo","sem","google ads","social media","content","analytics","email marketing","crm","campaign","conversion","roi","brand","copywriting"],
-  hr:        ["recruitment","onboarding","payroll","performance management","hris","talent acquisition","training","compliance","benefits","compensation","sourcing"],
-  finance:   ["accounting","financial analysis","excel","budgeting","forecasting","gaap","audit","tax","balance sheet","cash flow","erp","sap","reporting"],
-  sales:     ["crm","salesforce","lead generation","pipeline","negotiation","closing","quota","b2b","account management","prospecting","revenue","upselling"],
+  default: ["communication", "teamwork", "leadership", "management", "analytical", "project", "collaboration", "organized"],
+  frontend: ["react", "vue", "angular", "javascript", "typescript", "html", "css", "tailwind", "redux", "responsive", "ui", "ux", "figma", "next.js", "rest api"],
+  backend: ["node", "express", "python", "django", "java", "spring", "sql", "mongodb", "postgresql", "redis", "api", "rest", "graphql", "microservices", "docker", "aws"],
+  fullstack: ["react", "node", "javascript", "typescript", "mongodb", "sql", "rest api", "docker", "git", "html", "css", "express", "redux", "aws", "ci/cd"],
+  data: ["python", "sql", "machine learning", "pandas", "numpy", "tensorflow", "statistics", "visualization", "tableau", "power bi", "excel", "spark", "etl", "scikit"],
+  devops: ["docker", "kubernetes", "ci/cd", "jenkins", "aws", "azure", "terraform", "ansible", "linux", "bash", "monitoring", "prometheus", "git", "pipeline"],
+  design: ["figma", "sketch", "adobe xd", "photoshop", "ui", "ux", "wireframe", "prototype", "user research", "typography", "responsive", "accessibility", "design system"],
+  marketing: ["seo", "sem", "google ads", "social media", "content", "analytics", "email marketing", "crm", "campaign", "conversion", "roi", "brand", "copywriting"],
+  hr: ["recruitment", "onboarding", "payroll", "performance management", "hris", "talent acquisition", "training", "compliance", "benefits", "compensation", "sourcing"],
+  finance: ["accounting", "financial analysis", "excel", "budgeting", "forecasting", "gaap", "audit", "tax", "balance sheet", "cash flow", "erp", "sap", "reporting"],
+  sales: ["crm", "salesforce", "lead generation", "pipeline", "negotiation", "closing", "quota", "b2b", "account management", "prospecting", "revenue", "upselling"],
 };
 
-const STRONG_VERBS = ["achieved","built","created","delivered","designed","developed","drove","engineered","executed","generated","implemented","improved","increased","launched","led","managed","optimized","reduced","spearheaded"];
+const STRONG_VERBS = ["achieved", "built", "created", "delivered", "designed", "developed", "drove", "engineered", "executed", "generated", "implemented", "improved", "increased", "launched", "led", "managed", "optimized", "reduced", "spearheaded"];
 
 function getRoleKws(role) {
   const r = role.toLowerCase();
   if (r.includes("front")) return ROLE_KW.frontend;
-  if (r.includes("back"))  return ROLE_KW.backend;
-  if (r.includes("full"))  return ROLE_KW.fullstack;
+  if (r.includes("back")) return ROLE_KW.backend;
+  if (r.includes("full")) return ROLE_KW.fullstack;
   if (r.includes("data") || r.includes("analyst") || r.includes("ml")) return ROLE_KW.data;
   if (r.includes("devops") || r.includes("cloud")) return ROLE_KW.devops;
   if (r.includes("design") || r.includes("ui") || r.includes("ux")) return ROLE_KW.design;
@@ -49,36 +50,36 @@ function scoreApplicant(applicant, jobTitle, jobDesc) {
 
   // 2. Extract keywords
   const roleKws = getRoleKws(jobTitle);
-  const jobKws  = jobDesc
+  const jobKws = jobDesc
     ? [...new Set(jobDesc.toLowerCase().match(/\b[a-z][a-z.+#]{2,}\b/g) || [])].filter(w => w.length > 3).slice(0, 20)
     : [];
   const allKws = [...new Set([...roleKws, ...jobKws])];
 
   // 3. Find matches
-  const found       = allKws.filter(kw => text.includes(kw));
-  const missing     = allKws.filter(kw => !text.includes(kw)).slice(0, 4);
-  
+  const found = allKws.filter(kw => text.includes(kw));
+  const missing = allKws.filter(kw => !text.includes(kw)).slice(0, 4);
+
   // 4. Checks
-  const hasNumbers  = /\d+%|\$\d+|\d+\s*(users|clients|projects|team|members|million|k\b|years|months)/.test(text);
+  const hasNumbers = /\d+%|\$\d+|\d+\s*(users|clients|projects|team|members|million|k\b|years|months)/.test(text);
   const strongCount = STRONG_VERBS.filter(v => text.includes(v)).length;
-  const skillCount  = applicant.skills?.length || 0;
-  const hasExp      = !!(applicant.experience && applicant.experience.trim());
-  const hasEdu      = !!(applicant.education && applicant.education.trim());
-  
+  const skillCount = applicant.skills?.length || 0;
+  const hasExp = !!(applicant.experience && applicant.experience.trim());
+  const hasEdu = !!(applicant.education && applicant.education.trim());
+
   // 5. NEW: Check if the candidate is a fresher (helps with Telecaller role)
   const isFresher = text.includes("fresher") || text.includes("b.sc") || text.includes("student");
 
   // 6. Calculate score based on keywords and profile info
   let score = 30; // Base score
-  
+
   // Boost score heavily if they match keywords (since they might be a fresher)
-  if (found.length > 0) score += Math.min(40, found.length * 5); 
-  
-  if (hasNumbers)       score += 5;
+  if (found.length > 0) score += Math.min(40, found.length * 5);
+
+  if (hasNumbers) score += 5;
   if (strongCount >= 2) score += 5;
-  if (skillCount >= 3)  score += 10; // Award points for having skills listed on profile
-  if (hasExp)           score += 5;
-  if (hasEdu)           score += 5;
+  if (skillCount >= 3) score += 10; // Award points for having skills listed on profile
+  if (hasExp) score += 5;
+  if (hasEdu) score += 5;
 
   // If they have the skills but no experience (Fresher), don't penalize them too much
   if (isFresher && skillCount > 0) score += 10;
@@ -87,27 +88,27 @@ function scoreApplicant(applicant, jobTitle, jobDesc) {
 
   const verdict =
     score >= 80 ? "Strong Match" :
-    score >= 65 ? "Good Candidate" :
-    score >= 50 ? "Moderate Fit" :
-    score >= 35 ? "Weak Match" : "Poor Fit";
+      score >= 65 ? "Good Candidate" :
+        score >= 50 ? "Moderate Fit" :
+          score >= 35 ? "Weak Match" : "Poor Fit";
 
   const strengths = [];
   if (found.length >= 2) strengths.push(`Matches ${found.length} key skills for this role`);
-  if (skillCount >= 3)   strengths.push(`Lists ${skillCount} relevant skills on profile`);
-  if (hasEdu)            strengths.push("Has relevant educational background");
+  if (skillCount >= 3) strengths.push(`Lists ${skillCount} relevant skills on profile`);
+  if (hasEdu) strengths.push("Has relevant educational background");
   if (strengths.length === 0) strengths.push("Has basic profile information");
 
   const gaps = [];
   if (missing.length > 0) gaps.push(`Missing keywords: ${missing.slice(0, 3).join(", ")}`);
-  if (!hasNumbers)        gaps.push("No measurable achievements listed");
+  if (!hasNumbers) gaps.push("No measurable achievements listed");
   if (!hasExp && !isFresher) gaps.push("No work experience information");
 
   const recommendation =
     score >= 65
       ? `Strong candidate for ${jobTitle} — recommend shortlisting.`
       : score >= 45
-      ? `Moderate fit for ${jobTitle} — consider if pool is small.`
-      : `Below threshold for ${jobTitle} — missing key requirements.`;
+        ? `Moderate fit for ${jobTitle} — consider if pool is small.`
+        : `Below threshold for ${jobTitle} — missing key requirements.`;
 
   return { score, verdict, strengths: strengths.slice(0, 3), gaps: gaps.slice(0, 3), recommendation };
 }
@@ -157,13 +158,13 @@ async function extractTextFromFile(file) {
 // ── Score helpers ─────────────────────────────────────────────
 const scoreColor = (s) =>
   s >= 75 ? "text-green-600 dark:text-green-400" :
-  s >= 50 ? "text-yellow-500 dark:text-yellow-400" :
-  "text-red-500 dark:text-red-400";
+    s >= 50 ? "text-yellow-500 dark:text-yellow-400" :
+      "text-red-500 dark:text-red-400";
 
 const scoreBg = (s) =>
   s >= 75 ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700" :
-  s >= 50 ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-600" :
-  "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700";
+    s >= 50 ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-600" :
+      "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700";
 
 // ── Main ──────────────────────────────────────────────────────
 const RecruiterResumeAnalyzer = () => {
@@ -226,7 +227,7 @@ const RecruiterResumeAnalyzer = () => {
             _id: a._id,
             name: a.applicant?.fullname || "Unknown",
             email: a.applicant?.emailId?.email || "",
-            skills: a.applicant?.profile?.skills || [],
+            skills: toSkillArray(a.applicant?.profile?.skills),
             experience: a.applicant?.profile?.experience?.duration
               ? `${a.applicant.profile.experience.duration} years as ${a.applicant.profile.experience.jobProfile || ""}`
               : "",
@@ -281,7 +282,8 @@ const RecruiterResumeAnalyzer = () => {
     setResults(null);
     try {
       const jobTitle = selectedJob.jobDetails?.title || "Job Role";
-      const jobDesc = jobDescOverride.trim() || selectedJob.jobDetails?.description || "";
+      const stripHtml = (h) => String(h || "").replace(/<[^>]*>/g, " ");
+      const jobDesc = jobDescOverride.trim() || stripHtml(selectedJob.jobDetails?.details);
       const enrichedApplicants = applicants.map((a) => {
         const uploaded = uploadedResumes[a._id];
         return { ...a, bio: uploaded?.text ? `RESUME TEXT:\n${uploaded.text.slice(0, 3000)}` : a.bio };
@@ -299,10 +301,10 @@ const RecruiterResumeAnalyzer = () => {
   const sorted = useMemo(() =>
     results
       ? [...results].sort((a, b) =>
-          sortBy === "score" ? b.score - a.score : a.applicant.name.localeCompare(b.applicant.name)
-        )
+        sortBy === "score" ? b.score - a.score : a.applicant.name.localeCompare(b.applicant.name)
+      )
       : []
-  , [results, sortBy]);
+    , [results, sortBy]);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-6 pt-20">
@@ -406,40 +408,39 @@ const RecruiterResumeAnalyzer = () => {
                     {applicants.map((a, i) => {
                       const uploaded = uploadedResumes[a._id];
                       return (
-                      <tr key={a._id} className="border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
-                        <td className="px-4 py-2 text-gray-400">{i + 1}</td>
-                        <td className="px-4 py-2 font-medium text-gray-800 dark:text-gray-100">{a.name}</td>
-                        <td className="px-4 py-2 text-gray-500 dark:text-gray-400 max-w-[180px] truncate">
-                          {a.skills?.slice(0, 3).join(", ") || "—"}
-                          {a.skills?.length > 3 && ` +${a.skills.length - 3}`}
-                        </td>
-                        <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{a.experience || "—"}</td>
-                        <td className="px-4 py-2">
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
-                            a.status === "Shortlisted" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
-                            a.status === "Rejected" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
-                            a.status === "Interview Schedule" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" :
-                            "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
-                          }`}>
-                            {a.status}
-                          </span>
-                        </td>
-                        <td className="px-4 py-2">
-                          {a.resumeUrl ? (
-                            <a
-                              href={a.resumeUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-indigo-600 dark:text-indigo-400 underline text-xs hover:text-indigo-800"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              View
-                            </a>
-                          ) : (
-                            <span className="text-gray-400 text-xs">—</span>
-                          )}
-                        </td>
-                      </tr>
+                        <tr key={a._id} className="border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
+                          <td className="px-4 py-2 text-gray-400">{i + 1}</td>
+                          <td className="px-4 py-2 font-medium text-gray-800 dark:text-gray-100">{a.name}</td>
+                          <td className="px-4 py-2 text-gray-500 dark:text-gray-400 max-w-[180px] truncate">
+                            {a.skills?.slice(0, 3).join(", ") || "—"}
+                            {a.skills?.length > 3 && ` +${a.skills.length - 3}`}
+                          </td>
+                          <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{a.experience || "—"}</td>
+                          <td className="px-4 py-2">
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${a.status === "Shortlisted" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
+                                a.status === "Rejected" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
+                                  a.status === "Interview Schedule" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" :
+                                    "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                              }`}>
+                              {a.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-2">
+                            {a.resumeUrl ? (
+                              <a
+                                href={a.resumeUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-indigo-600 dark:text-indigo-400 underline text-xs hover:text-indigo-800"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                View
+                              </a>
+                            ) : (
+                              <span className="text-gray-400 text-xs">—</span>
+                            )}
+                          </td>
+                        </tr>
                       );
                     })}
                   </tbody>
@@ -528,11 +529,10 @@ const RecruiterResumeAnalyzer = () => {
                   key={s}
                   type="button"
                   onClick={() => setSortBy(s)}
-                  className={`px-3 py-1 rounded-lg border text-xs font-semibold transition-colors ${
-                    sortBy === s
+                  className={`px-3 py-1 rounded-lg border text-xs font-semibold transition-colors ${sortBy === s
                       ? "bg-indigo-600 text-white border-indigo-600"
                       : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-indigo-400"
-                  }`}
+                    }`}
                 >
                   {s === "score" ? "Score ↓" : "Name A-Z"}
                 </button>

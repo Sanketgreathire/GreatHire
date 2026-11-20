@@ -7,7 +7,7 @@ import { COMPANY_API_END_POINT, SOURCING_API_END_POINT } from "@/utils/ApiEndPoi
 import { useSelector, useDispatch } from "react-redux";
 import { decreaseCandidateCredits, decreaseAiSourcingCredits } from "@/redux/companySlice";
 import { toast } from "react-hot-toast";
- 
+
 import { Helmet } from "react-helmet-async";
 import { Search, Brain, Zap, X, Database, Github, Lock } from "lucide-react";
 import PillSelect from "@/components/shared/PillSelect";
@@ -105,24 +105,17 @@ const CandidateList = () => {
     jobDescription: "",
   });
 
-    useEffect(() => {
+  useEffect(() => {
     if (location.state?.matchSearch) {
       const { jobTitle, skills, jobDescription } = location.state.matchSearch;
-      
-      // 1. Fill the inputs visually
-     setFilters((prev) => ({
-        ...prev,
+      const newFilters = {
         jobTitle: jobTitle || "",
-        skills: skills || "", // Auto-fills the skills field
+        skills: skills || "",
         jobDescription: jobDescription || "",
-      }));
+      };
+      setFilters((prev) => ({ ...prev, ...newFilters }));
 
-      // 2. Automatically trigger the search (Optional)
-      // We use a timeout of 100ms to ensure the state has updated before we call the API
-      const timer = setTimeout(() => {
-        triggerAutoSearch(newFilters);
-      }, 100);
-
+      const timer = setTimeout(() => triggerAutoSearch(newFilters), 100);
       return () => clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -195,7 +188,7 @@ const CandidateList = () => {
   const aiSourcingBalance = company?.aiSourcingCredits ?? 0;
 
   const loadSavedSourcedCandidates = useCallback(async (designation = savedSourcedFilter) => {
-    if (!company?._id) return;
+      if (!company?._id || aiSourcingLocked) return;
     setSavedSourcedLoading(true);
     try {
       const { data } = await API.get(`/v1/sourcing/saved-sourced`, {
@@ -730,12 +723,15 @@ const CandidateList = () => {
           {activeSection === SECTIONS.DATABASE && (
             <>
               <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl shadow-md p-4 md:p-6">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex  flex-wrap items-center justify-between gap-2 mb-4">
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Filters</p>
                   {!hasAdvancedFilters && (
                     <button
                       onClick={() => navigate("/packages")}
-                      className="flex items-center gap-1.5 text-xs font-semibold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700 px-3 py-1.5 rounded-full hover:bg-purple-100 dark:hover:bg-purple-900/50 transition"
+                      className="flex w-full sm:w-auto items-center gap-1.5 text-xs font-semibold text-purple-600
+                       dark:text-purple-400 bg-purple-50 dark:bg-purple-900/30 border
+                        border-purple-200 dark:border-purple-700 px-3 py-1.5 rounded-full
+                         hover:bg-purple-100 dark:hover:bg-purple-900/50 transition"
                     >
                       🔒 Smart Filters available on paid plan & above
                     </button>
@@ -804,7 +800,7 @@ const CandidateList = () => {
                 </div>
               </div>
 
-              <div className="mt-6 flex flex-row flex-wrap items-center justify-center md:justify-start gap-4 relative z-[50]">
+              <div className="mt-6 flex flex-row flex-wrap items-center justify-center md:justify-start gap-4">
                 {/* Find Candidates Button */}
                 <Button
                   onClick={fetchCandidates}

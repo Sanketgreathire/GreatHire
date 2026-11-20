@@ -1,4 +1,4 @@
-import   { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import axios from "axios";
 import { Eye, Trash2 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
@@ -156,7 +156,7 @@ const RecruiterJobs = ({ recruiterId }) => {
 
         {/* Corporate Table */}
         <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
-          <table className="w-full">
+          <table className="w-full min-w-[700px]">
             <thead className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-sm">
               <tr>
                 <th className="py-3 px-5 text-left font-semibold">Job Title</th>
@@ -173,7 +173,7 @@ const RecruiterJobs = ({ recruiterId }) => {
               {filteredJobs.length ? (
                 filteredJobs.map((job) => (
                   <tr key={job._id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                    <td className="py-3 px-5 text-gray-900 dark:text-gray-100">{job.jobDetails.title}</td>
+                    <td className="py-3 px-5 align-middle whitespace-nowrap text-gray-900 dark:text-gray-100">{job.jobDetails.title}</td>
                     <td className="py-3 px-5">{job.jobDetails.companyName}</td>
                     <td className="py-3 px-5">{job.jobDetails.location}</td>
                     <td className="py-3 px-5">{job.jobDetails.jobType}</td>
@@ -182,8 +182,8 @@ const RecruiterJobs = ({ recruiterId }) => {
                     <td className="py-3 px-5 text-center">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium cursor-pointer transition-colors ${job.jobDetails.isActive
-                            ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50"
-                            : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50"
+                          ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50"
+                          : "bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-900/50"
                           }`}
                         onClick={() =>
                           toggleActive(job._id, !job.jobDetails.isActive)
@@ -193,18 +193,20 @@ const RecruiterJobs = ({ recruiterId }) => {
                       </span>
                     </td>
 
-                    <td className="py-3 px-5 flex justify-center gap-4">
-                      <Eye
-                        className="text-blue-600 dark:text-blue-400 cursor-pointer hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
-                        onClick={() => handleJobDetailsClick(job._id)}
-                      />
-                      <Trash2
-                        className="text-red-500 dark:text-red-400 cursor-pointer hover:text-red-700 dark:hover:text-red-300 transition-colors"
-                        onClick={() => {
-                          setJobId(job._id);
-                          setShowDeleteModal(true);
-                        }}
-                      />
+                    <td className="py-3 px-5 text-center align-middle">
+                      <div className="flex items-center justify-center gap-4">
+                        <Eye
+                          className="text-blue-600 dark:text-blue-400 cursor-pointer hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                          onClick={() => handleJobDetailsClick(job._id)}
+                        />
+                        <Trash2
+                          className="text-red-500 dark:text-red-400 cursor-pointer hover:text-red-700 dark:hover:text-red-300 transition-colors"
+                          onClick={() => {
+                            setJobId(job._id);
+                            setShowDeleteModal(true);
+                          }}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -219,7 +221,7 @@ const RecruiterJobs = ({ recruiterId }) => {
           </table>
         </div>
 
-     
+
         {/* Pagination — centered */}
         <div className="flex justify-center items-center gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 text-sm">
           <button

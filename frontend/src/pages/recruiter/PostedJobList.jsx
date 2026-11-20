@@ -21,6 +21,7 @@ import { JOB_API_END_POINT, JD_MATCHING_API_END_POINT } from "@/utils/ApiEndPoin
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { Helmet } from "react-helmet-async";
+import { toSkillArray } from "@/utils/skills"; 
 
 const statusOptions = ["All", "Active", "Expired"];
 
@@ -450,7 +451,7 @@ const PostedJobList = () => {
                       ? candidate.profile?.otherQualification 
                       : candidate.profile?.qualification;
                     const location = [candidate.address?.city, candidate.address?.state].filter(Boolean).join(", ");
-                    const skills = candidate.profile?.skills || [];
+                    const skills = toSkillArray(candidate.profile?.skills);
 
                     return (
                       <div key={idx} className="flex flex-col sm:flex-row gap-4 p-5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md transition-shadow">
