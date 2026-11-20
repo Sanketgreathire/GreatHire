@@ -1105,9 +1105,11 @@ export const getCandidateData = async (req, res) => {
       query["profile.experiences.duration"] = experience;
     }
 
-    if (salaryBudget) {
-      query["profile.expectedCTC"] = salaryBudget;
-    }
+    // Note: profile.expectedCTC is not stored in the User schema;
+    // skip this filter to avoid returning zero results.
+    // if (salaryBudget) {
+    //   query["profile.expectedCTC"] = salaryBudget;
+    // }
 
     if (gender) {
       query["profile.gender"] = new RegExp(`^${escapeRegex(gender)}$`, "i");

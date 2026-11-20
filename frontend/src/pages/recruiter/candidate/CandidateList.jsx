@@ -252,8 +252,8 @@ const CandidateList = () => {
         ...(filters.location && { location: filters.location }),
         ...(filters.skills && { skills: filters.skills.split(",").map((skill) => skill.trim()) }),
         ...(filters.designation && { designation: filters.designation }),
-        ...(filters.minExp && { minExp: Number(filters.minExp) }),
-        ...(filters.maxExp && { maxExp: Number(filters.maxExp) }),
+        ...(filters.minExp !== "" && { minExp: Number(filters.minExp) }),
+        ...(filters.maxExp !== "" && { maxExp: Number(filters.maxExp) }),
         ...(filters.jobDescription && { jobDescription: filters.jobDescription }),
       };
 

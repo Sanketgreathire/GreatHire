@@ -190,11 +190,6 @@ const ApplicantDetails = ({
       return;
     }
 
-    if (decisionStatus === "Shortlisted" || decisionStatus === "Rejected") {
-      toast.error("A final decision has already been made.");
-      return;
-    }
-
     try {
       setScreeningLoading(true);
 
@@ -479,18 +474,6 @@ const canMakeDecision =
   const handleFinalDecision = async (decision) => {
     if (!applicantId) {
       toast.error("Invalid applicant ID");
-      return;
-    }
-
-    if (!canMakeDecision) {
-      toast.error(
-        "Complete screening, interview and save interview logs before final decision."
-      );
-      return;
-    }
-
-    if (decisionStatus === "Shortlisted" || decisionStatus === "Rejected") {
-      toast.error("A final decision has already been made.");
       return;
     }
 
@@ -1118,11 +1101,7 @@ const downloadResumeFile = async () => {
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={handleScreenManually}
-                      disabled={
-                        screeningLoading ||
-                        decisionStatus === "Shortlisted" ||
-                        decisionStatus === "Rejected"
-                      }
+                      disabled={screeningLoading}
                       className="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white rounded-lg font-semibold text-xs transition shadow-sm"
                     >
                       {screeningLoading ? "Screening..." : "⚡ Screen Resume"}
@@ -1174,12 +1153,6 @@ const downloadResumeFile = async () => {
 
                   {/* Final decision */}
                   <div className="space-y-2">
-                    {!canMakeDecision && (
-                      <p className="text-xs text-amber-600 dark:text-amber-400">
-                        Final decision will be unlocked only when Resume Screening is Passed, the Interview is Completed, and the Interview Logs are Saved
-                      </p>
-                    )}
-
                     <div className="flex gap-3">
                       <button
                         className={`flex-1 py-3 text-white rounded-2xl font-semibold text-sm transition shadow-sm disabled:opacity-50 ${
@@ -1188,10 +1161,7 @@ const downloadResumeFile = async () => {
                             : "bg-green-500 hover:bg-green-600"
                         }`}
                         disabled={
-                          !canMakeDecision ||
-                          decisionLoading !== "" ||
-                          decisionStatus === "Shortlisted" ||
-                          decisionStatus === "Rejected"
+                          decisionLoading !== ""
                         }
                         onClick={() => handleFinalDecision("Shortlisted")}
                       >
@@ -1209,10 +1179,7 @@ const downloadResumeFile = async () => {
                             : "bg-red-500 hover:bg-red-600"
                         }`}
                         disabled={
-                          !canMakeDecision ||
-                          decisionLoading !== "" ||
-                          decisionStatus === "Shortlisted" ||
-                          decisionStatus === "Rejected"
+                          decisionLoading !== ""
                         }
                         onClick={() => handleFinalDecision("Rejected")}
                       >
